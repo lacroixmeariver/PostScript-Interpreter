@@ -15,7 +15,7 @@ func CreateStack() *Stack {
 	}
 } 
 
-func (s *Stack) Push (item PSConstant){
+func (s *Stack) Push (item PSConstant) {
 	s.items = append(s.items, item)
 	s.itemCount ++
 }
