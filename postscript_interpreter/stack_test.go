@@ -6,7 +6,7 @@ import (
 
 // stack tests
 // initializing a stack
-func TestStackCreation (t *testing.T) {
+func TestStackCreation(t *testing.T) {
 	testStack := CreateStack()
 	count := len(testStack.items)
 	if testStack == nil {
@@ -18,10 +18,10 @@ func TestStackCreation (t *testing.T) {
 }
 
 // testing push
-func TestStackPush (t *testing.T) {
+func TestStackPush(t *testing.T) {
 	tests := []struct {
-		name string
-		values []PSConstant
+		name     string
+		values   []PSConstant
 		expected int
 	}{
 		{"empty", []PSConstant{}, 0},
@@ -32,7 +32,7 @@ func TestStackPush (t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func (t *testing.T)  {
+		t.Run(tt.name, func(t *testing.T) {
 			testStack := CreateStack()
 
 			for _, val := range tt.values {
@@ -41,19 +41,19 @@ func TestStackPush (t *testing.T) {
 
 			result := len(testStack.items)
 			if result != tt.expected {
-				t.Fatal("pushing results in unexpected stack count", 
-				tt.expected, result)
+				t.Fatal("pushing results in unexpected stack count",
+					tt.expected, result)
 			}
 		})
 	}
 }
 
 // testing pop
-func TestStackPop (t *testing.T) {
+func TestStackPop(t *testing.T) {
 	tests := []struct {
-		name string
-		values []PSConstant
-		remove int
+		name     string
+		values   []PSConstant
+		remove   int
 		expected int
 	}{
 		{"empty", []PSConstant{}, 1, 0},
@@ -62,33 +62,33 @@ func TestStackPop (t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func (t *testing.T)  {
+		t.Run(tt.name, func(t *testing.T) {
 			testStack := CreateStack()
 
 			for _, val := range tt.values {
 				testStack.Push(val)
 			}
-			
+
 			i := 0
-			for i < tt.remove{
+			for i < tt.remove {
 				testStack.Pop()
 				i++
 			}
-			
+
 			result := len(testStack.items)
 			if result != tt.expected {
-				t.Fatal("pushing results in unexpected stack count", 
-				tt.expected, result)
+				t.Fatal("pushing results in unexpected stack count",
+					tt.expected, result)
 			}
 		})
 	}
 }
 
-// testing count 
-func TestStackCount (t *testing.T) {
+// testing count
+func TestStackCount(t *testing.T) {
 	tests := []struct {
-		name string
-		values []PSConstant
+		name     string
+		values   []PSConstant
 		expected int
 	}{
 		{"empty", []PSConstant{}, 0},
@@ -99,7 +99,7 @@ func TestStackCount (t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func (t *testing.T)  {
+		t.Run(tt.name, func(t *testing.T) {
 			testStack := CreateStack()
 
 			for _, val := range tt.values {
@@ -108,17 +108,17 @@ func TestStackCount (t *testing.T) {
 
 			result := testStack.StackCount()
 			if result != tt.expected {
-				t.Fatal("pushing results in unexpected stack count", 
-				tt.expected, result)
+				t.Fatal("pushing results in unexpected stack count",
+					tt.expected, result)
 			}
 		})
 	}
 }
 
-func TestIsEmpty (t *testing.T){
-		tests := []struct {
-		name string
-		values []PSConstant
+func TestIsEmpty(t *testing.T) {
+	tests := []struct {
+		name     string
+		values   []PSConstant
 		expected bool
 	}{
 		{"empty", []PSConstant{}, true},
@@ -126,7 +126,7 @@ func TestIsEmpty (t *testing.T){
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func (t *testing.T)  {
+		t.Run(tt.name, func(t *testing.T) {
 			testStack := CreateStack()
 
 			for _, val := range tt.values {
@@ -135,8 +135,8 @@ func TestIsEmpty (t *testing.T){
 
 			result := testStack.IsEmpty()
 			if result != tt.expected {
-				t.Fatal("pushing results in unexpected stack count", 
-				tt.expected, result)
+				t.Fatal("pushing results in unexpected stack count",
+					tt.expected, result)
 			}
 		})
 	}

@@ -7,21 +7,21 @@ import (
 func TestIsWhitespace(t *testing.T) {
 	result := IsWhitespace(' ')
 	if result != true {
-		t.Fatal("Whitespace not detected")
+		t.Fatal("whitespace not detected")
 	}
 }
 
 func TestIsComment(t *testing.T) {
 	result := IsComment('%')
 	if result != true {
-		t.Fatal("Comment not detected")
+		t.Fatal("comment not detected")
 	}
 }
 
 func TestIsLetter(t *testing.T) {
 	result := IsLetter('a')
 	if result != true {
-		t.Fatal("Letter not detected")
+		t.Fatal("letter not detected")
 	}
 }
 
@@ -128,7 +128,6 @@ func TestTokenizeProcedure(t *testing.T) {
 		t.Fatalf("tokenize error: %v", err)
 	}
 
-	// Should have: {, dup, mul, }
 	if len(tokens) != 4 {
 		t.Fatalf("expected 4 tokens, got %d", len(tokens))
 	}
