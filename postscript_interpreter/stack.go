@@ -31,9 +31,11 @@ func (s *Stack) Pop () (PSConstant, error){
 	return item, nil
 }
 
-func (s *Stack) Peek() (item PSConstant){
-	item = s.items[:len(s.items)]
-	return item
+func (s *Stack) Peek() (PSConstant, error){
+	if len(s.items) <= 0 {
+		return nil, fmt.Errorf("stack is empty")
+	}
+	return s.items[len(s.items) - 1], nil
 }
 
 func (s *Stack) IsEmpty() bool {

@@ -35,6 +35,10 @@ func (i *Interpreter) registerOperators() {
 	i.operators["dup"] = opDup
 	i.operators["pop"] = opPop
 	i.operators["exch"] = opExch
+	i.operators["clear"] = opClear
+	i.operators["abs"] = opAbs
+	i.operators["neg"] = opNeg
+	i.operators["count"] = opCount
 }
 
 func (i *Interpreter) Execute(tokens []Token) error {
@@ -65,7 +69,7 @@ func (i *Interpreter) Execute(tokens []Token) error {
 			val := token.Value.(string)
 			opFunc, ok := i.operators[val]
 			if !ok {
-				return fmt.Errorf("operator not defined", val)
+				return fmt.Errorf("operator not defined")
 			}
 			err := opFunc(i)
 			if err != nil {
