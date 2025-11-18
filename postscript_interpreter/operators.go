@@ -265,8 +265,8 @@ func opGe(i *Interpreter) error {
 	}
 
 	// trying as numbers first 
-	x, _ := i.opStack.Pop()
 	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
 
 	numX, errX := ToNumber(x)
 	numY, errY := ToNumber(y)
@@ -277,15 +277,15 @@ func opGe(i *Interpreter) error {
 		return nil
 	}
 
-	// trying as strings 
-	strA, errA := x.(string)
-	strB, errB := y.(string)
+	// // trying as strings 
+	// strA, errA := x.(string)
+	// strB, errB := y.(string)
 
-	if errA && errB {
-		result := strA >= strB 
-		i.opStack.Push(result)
-		return nil
-	}
+	// if errA && errB {
+	// 	result := strA >= strB 
+	// 	i.opStack.Push(result)
+	// 	return nil
+	// }
 
 	// accounting for type mismatch
 	return fmt.Errorf("type mismatch")
@@ -298,8 +298,8 @@ func opGt(i *Interpreter) error {
 	}
 
 	// trying as numbers first 
-	x, _ := i.opStack.Pop()
 	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
 
 	numX, errX := ToNumber(x)
 	numY, errY := ToNumber(y)
@@ -331,8 +331,8 @@ func opLe(i *Interpreter) error {
 	}
 
 	// trying as numbers first 
-	x, _ := i.opStack.Pop()
 	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
 
 	numX, errX := ToNumber(x)
 	numY, errY := ToNumber(y)
@@ -365,8 +365,8 @@ func opLt(i *Interpreter) error {
 	}
 
 	// trying as numbers first 
-	x, _ := i.opStack.Pop()
 	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
 
 	numX, errX := ToNumber(x)
 	numY, errY := ToNumber(y)
