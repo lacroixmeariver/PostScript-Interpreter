@@ -39,11 +39,13 @@ func (i *Interpreter) registerOperators() {
 	i.operators["abs"] = opAbs
 	i.operators["neg"] = opNeg
 	i.operators["count"] = opCount
+
+	// TODO: Add missing operators 
 }
 
 func (i *Interpreter) Execute(tokens []Token) error {
 	pos := 0
-	if pos < len(tokens) {
+	for pos < len(tokens) {
 		token := tokens[pos]
 		switch token.Type {
 		// if it's a value type, push it onto the stack

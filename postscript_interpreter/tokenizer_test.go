@@ -25,6 +25,11 @@ func TestIsLetter(t *testing.T) {
 	}
 }
 
+/*
+	Disclosure: The tests below were written using Generative AI. 
+*/
+
+
 func TestTokenizeNumber(t *testing.T) {
 	tests := []struct {
 		input    string

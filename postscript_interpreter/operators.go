@@ -7,23 +7,24 @@ import (
 
 // Helper functions
 
-// Allows for interface types to be converted into numbers to perform operations on 
+// Allows for interface types to be converted into numbers to perform operations on
 func ToNumber(num PSConstant) (float64, error) {
-	
-	switch val := num.(type) {
-		case int:
-			return float64(val), nil 
-		case float64:
-			return val, nil
-		default:
-			return math.NaN(), fmt.Errorf("bad input")
-	}  
-}
-// ========================================= Arithmetic operators 
 
-// adds 2 operands 
+	switch val := num.(type) {
+	case int:
+		return float64(val), nil
+	case float64:
+		return val, nil
+	default:
+		return math.NaN(), fmt.Errorf("bad input")
+	}
+}
+
+// ========================================= Arithmetic operators
+
+// adds 2 operands
 func opAdd(i *Interpreter) error {
-	
+
 	if i.opStack.StackCount() < 2 {
 		return fmt.Errorf("not enough items")
 	}
@@ -72,7 +73,7 @@ func opSub(i *Interpreter) error {
 	return nil
 }
 
-// multiplies one operand from the other 
+// multiplies one operand from the other
 func opMul(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
 		return fmt.Errorf("not enough items")
@@ -116,6 +117,10 @@ func opDiv(i *Interpreter) error {
 		return fmt.Errorf("operand error")
 	}
 
+	if numY == 0 {
+		return fmt.Errorf("divide by zero error")
+	}
+
 	result := numX / numY
 	i.opStack.Push(result)
 
@@ -126,7 +131,7 @@ func opDiv(i *Interpreter) error {
 
 // duplicates top of stack and pushes it to top of stack
 func opDup(i *Interpreter) error {
-	
+
 	topStack, _ := i.opStack.Peek()
 	if topStack != nil {
 		dup := topStack
@@ -158,7 +163,7 @@ func opExch(i *Interpreter) error {
 	return nil
 }
 
-// clears the stack 
+// clears the stack
 func opClear(i *Interpreter) error {
 	for i.opStack.StackCount() > 0 {
 		i.opStack.Pop()
@@ -166,7 +171,7 @@ func opClear(i *Interpreter) error {
 	return nil
 }
 
-// pushes the number of elements in stack onto the stack 
+// pushes the number of elements in stack onto the stack
 func opCount(i *Interpreter) error {
 	count := i.opStack.StackCount()
 	i.opStack.Push(count)
@@ -194,7 +199,7 @@ func opAbs(i *Interpreter) error {
 	return nil
 }
 
-// takes element at top of stack and pushes its negative value onto the stack 
+// takes element at top of stack and pushes its negative value onto the stack
 func opNeg(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
 		return fmt.Errorf("not enough elements in the stack")
@@ -210,10 +215,10 @@ func opNeg(i *Interpreter) error {
 	return nil
 }
 
-// ================================ Boolean operators 
+// ================================ Boolean operators
 
-// pushes true if two items are equal 
-func opEq(i * Interpreter) error {
+// pushes true if two items are equal
+func opEq(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
 		return fmt.Errorf("stack underflow")
 	}
@@ -221,22 +226,18 @@ func opEq(i * Interpreter) error {
 	x, _ := i.opStack.Pop()
 	y, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
-	if err != nil {
-		return fmt.Errorf("operand error")
+	numX, errX := ToNumber(x)
+	numY, errY := ToNumber(y)
+
+	if errX == nil && errY == nil {
+		result := numX == numY
+		i.opStack.Push(result)
+		return nil
 	}
 
-	numY, err := ToNumber(y)
-	if err != nil {
-		return fmt.Errorf("operand error")
-	}
+	result := x == y
+	i.opStack.Push(result)
 
-	if numX == numY {
-		i.opStack.Push(true)
-	}
-
-	i.opStack.Push(false)
-	
 	return nil
 }
 
@@ -249,12 +250,18 @@ func opNe(i *Interpreter) error {
 	x, _ := i.opStack.Pop()
 	y, _ := i.opStack.Pop()
 
-	if x != y {
-		i.opStack.Push(true)
+	numX, errX := ToNumber(x)
+	numY, errY := ToNumber(y)
+
+	if errX == nil && errY == nil {
+		result := numX != numY
+		i.opStack.Push(result)
+		return nil
 	}
 
-	i.opStack.Push(false)
-	
+	result := x != y
+	i.opStack.Push(result)
+
 	return nil
 }
 
@@ -264,7 +271,7 @@ func opGe(i *Interpreter) error {
 		return fmt.Errorf("stack underflow")
 	}
 
-	// trying as numbers first 
+	// trying as numbers first
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
@@ -277,15 +284,15 @@ func opGe(i *Interpreter) error {
 		return nil
 	}
 
-	// // trying as strings 
-	// strA, errA := x.(string)
-	// strB, errB := y.(string)
+	// trying as strings
+	strA, errA := x.(string)
+	strB, errB := y.(string)
 
-	// if errA && errB {
-	// 	result := strA >= strB 
-	// 	i.opStack.Push(result)
-	// 	return nil
-	// }
+	if errA && errB {
+		result := strA >= strB
+		i.opStack.Push(result)
+		return nil
+	}
 
 	// accounting for type mismatch
 	return fmt.Errorf("type mismatch")
@@ -297,7 +304,7 @@ func opGt(i *Interpreter) error {
 		return fmt.Errorf("stack underflow")
 	}
 
-	// trying as numbers first 
+	// trying as numbers first
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
@@ -310,12 +317,12 @@ func opGt(i *Interpreter) error {
 		return nil
 	}
 
-	// trying as strings 
-	strA, errA := x.(string)
-	strB, errB := y.(string)
+	// trying as strings
+	strA, okA := x.(string)
+	strB, okB := y.(string)
 
-	if errA && errB {
-		result := strA > strB 
+	if okA && okB {
+		result := strA > strB
 		i.opStack.Push(result)
 		return nil
 	}
@@ -330,7 +337,7 @@ func opLe(i *Interpreter) error {
 		return fmt.Errorf("stack underflow")
 	}
 
-	// trying as numbers first 
+	// trying as numbers first
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
@@ -343,12 +350,12 @@ func opLe(i *Interpreter) error {
 		return nil
 	}
 
-	// trying as strings 
-	strA, errA := x.(string)
-	strB, errB := y.(string)
+	// trying as strings
+	strA, okA := x.(string)
+	strB, okB := y.(string)
 
-	if errA && errB {
-		result := strA <= strB 
+	if okA && okB {
+		result := strA <= strB
 		i.opStack.Push(result)
 		return nil
 	}
@@ -357,14 +364,13 @@ func opLe(i *Interpreter) error {
 	return fmt.Errorf("type mismatch")
 }
 
-
 // pushes true if one item is less than the other
 func opLt(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
 		return fmt.Errorf("stack underflow")
 	}
 
-	// trying as numbers first 
+	// trying as numbers first
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
@@ -377,16 +383,96 @@ func opLt(i *Interpreter) error {
 		return nil
 	}
 
-	// trying as strings 
-	strA, errA := x.(string)
-	strB, errB := y.(string)
+	// trying as strings
+	strA, okA := x.(string)
+	strB, okB := y.(string)
 
-	if errA && errB {
-		result := strA < strB 
+	if okA && okB {
+		result := strA < strB
 		i.opStack.Push(result)
 		return nil
 	}
 
 	// accounting for type mismatch
 	return fmt.Errorf("type mismatch")
+}
+
+func opAnd(i *Interpreter) error {
+	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
+
+	boolX, okX := x.(bool)
+	boolY, okY := y.(bool)
+
+	if !okX || !okY {
+		return fmt.Errorf("requires two boolean values")
+	}
+
+	result := boolX && boolY
+
+	i.opStack.Push(result)
+
+	return nil
+}
+
+func opOr(i *Interpreter) error {
+	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
+
+	boolX, _ := x.(bool)
+	boolY, _ := y.(bool)
+
+	result := boolX || boolY
+
+	i.opStack.Push(result)
+
+	return nil
+}
+
+func opNot(i *Interpreter) error {
+	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
+
+	boolX, okX := x.(bool)
+	boolY, okY := y.(bool)
+
+	if okX || okY {
+		return fmt.Errorf("requires two boolean values")
+	}
+
+	result := !boolX && !boolY
+
+	i.opStack.Push(result)
+
+	return nil
+}
+
+func opTrue(i *Interpreter) error {
+	x, _ := i.opStack.Pop()
+
+	boolX := x.(bool)
+	if boolX {
+		i.opStack.Push(PSConstant(true))
+	}
+	return nil
+}
+
+func opFalse(i *Interpreter) error {
+	x, _ := i.opStack.Pop()
+
+	boolX := x.(bool)
+	if !boolX {
+		i.opStack.Push(PSConstant(false))
+	}
+	return nil
+}
+
+// ======================================== String manipulation
+
+func opLength(i *Interpreter) error {
+	val, _ := i.opStack.Pop()
+	str := val.(string)
+	result := len(str)
+	i.opStack.Push(result)
+	return nil
 }

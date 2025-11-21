@@ -1,3 +1,3 @@
-module github.com/lacroixmeariver/Postscript-Interpreter
+module postscript
 
 go 1.25.3
