@@ -12,7 +12,7 @@ jobs:
         go-version: '1.23'
 
     - name: Tests with coverage
-      run: go test -v -coverprofile=coverage.out ./ ...
+      run: go test -v -coverprofile=coverage.out ./...
 
     - name: Coverage pct
       run: |
