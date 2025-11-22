@@ -32,4 +32,4 @@ go.work.sum
 # .vscode/
 
 # OS specific garbage 
-*.DS_Store
+.DS_Store
