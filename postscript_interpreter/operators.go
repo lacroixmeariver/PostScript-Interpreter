@@ -127,6 +127,134 @@ func opDiv(i *Interpreter) error {
 	return nil
 }
 
+func opIdiv(i *Interpreter) error {
+	if i.opStack.StackCount() < 2 {
+		return fmt.Errorf("not enough items")
+	}
+
+	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
+
+	numX, err := ToNumber(x)
+	if err != nil {
+		return fmt.Errorf("operand error")
+	}
+
+	numY, err := ToNumber(y)
+	if err != nil {
+		return fmt.Errorf("operand error")
+	}
+
+	if numY == 0 {
+		return fmt.Errorf("divide by zero error")
+	}
+
+	result := numX / numY
+
+
+	i.opStack.Push(int(result))
+
+	return nil
+}
+
+func opMod(i *Interpreter) error {
+	if i.opStack.StackCount() < 2 {
+		return fmt.Errorf("not enough items")
+	}
+
+	y, _ := i.opStack.Pop()
+	x, _ := i.opStack.Pop()
+
+	numX, err := ToNumber(x)
+	if err != nil {
+		return fmt.Errorf("operand error")
+	}
+
+	numY, err := ToNumber(y)
+	if err != nil {
+		return fmt.Errorf("operand error")
+	}
+
+	if numY == 0 {
+		return fmt.Errorf("divide by zero error")
+	}
+
+	result := int(numX) % int(numY)
+	i.opStack.Push(result)
+
+	return nil
+}
+
+func opSqrt(i *Interpreter) error {
+	if i.opStack.StackCount() < 1 {
+		return fmt.Errorf("not enough items")
+	}
+	x, _ := i.opStack.Pop()
+
+	numX, err := ToNumber(x)
+	if err != nil {
+		return fmt.Errorf("operand error")
+	}
+
+	result := math.Sqrt(numX)
+
+	i.opStack.Push(result)
+	return nil
+}
+
+func opCeil(i *Interpreter) error {
+	if i.opStack.StackCount() < 1 {
+		return fmt.Errorf("not enough items")
+	}
+
+	x, _ := i.opStack.Pop()
+
+	numX, err := ToNumber(x)
+	if err != nil {
+		return fmt.Errorf("operand error")
+	}
+
+	result := math.Ceil(numX)
+
+	i.opStack.Push(result)
+	return nil
+}
+
+func opFloor(i *Interpreter) error {
+	if i.opStack.StackCount() < 1 {
+		return fmt.Errorf("not enough items")
+	}
+
+	x, _ := i.opStack.Pop()
+
+	numX, err := ToNumber(x)
+	if err != nil {
+		return fmt.Errorf("operand error")
+	}
+
+	result := math.Floor(numX)
+	
+	i.opStack.Push(result)
+	return nil
+}
+
+func opRound(i *Interpreter) error {
+	if i.opStack.StackCount() < 1 {
+		return fmt.Errorf("not enough items")
+	}
+
+	x, _ := i.opStack.Pop()
+
+	numX, err := ToNumber(x)
+	if err != nil {
+		return fmt.Errorf("operand error")
+	}
+
+	result := math.Round(numX)
+	
+	i.opStack.Push(result)
+	return nil
+}
 // =================================== Stack operations
 
 // duplicates top of stack and pushes it to top of stack
@@ -416,11 +544,19 @@ func opAnd(i *Interpreter) error {
 }
 
 func opOr(i *Interpreter) error {
+
+	if i.opStack.StackCount() < 2 {
+		return fmt.Errorf("stack underflow")
+	}
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	boolX, _ := x.(bool)
-	boolY, _ := y.(bool)
+	boolX, okX := x.(bool)
+	boolY, okY := y.(bool)
+
+	if !okX || !okY {
+		return fmt.Errorf("two boolean values required")
+	}
 
 	result := boolX || boolY
 
@@ -430,40 +566,29 @@ func opOr(i *Interpreter) error {
 }
 
 func opNot(i *Interpreter) error {
-	y, _ := i.opStack.Pop()
-	x, _ := i.opStack.Pop()
 
-	boolX, okX := x.(bool)
-	boolY, okY := y.(bool)
-
-	if okX || okY {
-		return fmt.Errorf("requires two boolean values")
+	if i.opStack.StackCount() < 1 {
+		return fmt.Errorf("stack underflow")
 	}
+	val, _ := i.opStack.Pop()
 
-	result := !boolX && !boolY
+	boolVal, okVal := val.(bool)
 
-	i.opStack.Push(result)
+	if !okVal {
+		return fmt.Errorf("requires boolean value")
+	}
+	i.opStack.Push(!boolVal)
 
 	return nil
 }
 
 func opTrue(i *Interpreter) error {
-	x, _ := i.opStack.Pop()
-
-	boolX := x.(bool)
-	if boolX {
-		i.opStack.Push(PSConstant(true))
-	}
+	i.opStack.Push(true)
 	return nil
 }
 
 func opFalse(i *Interpreter) error {
-	x, _ := i.opStack.Pop()
-
-	boolX := x.(bool)
-	if !boolX {
-		i.opStack.Push(PSConstant(false))
-	}
+	i.opStack.Push(false)
 	return nil
 }
 

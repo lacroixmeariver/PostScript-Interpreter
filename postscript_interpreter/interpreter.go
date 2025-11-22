@@ -29,17 +29,44 @@ func CreateInterpreter() *Interpreter {
 // creating dictionary of register operators and their associated functions
 func (i *Interpreter) registerOperators() {
 
+	// arithmetic 
 	i.operators["add"] = opAdd
-	i.operators["sub"] = opSub
-	i.operators["mul"] = opMul
-	i.operators["dup"] = opDup
-	i.operators["pop"] = opPop
-	i.operators["exch"] = opExch
-	i.operators["clear"] = opClear
-	i.operators["abs"] = opAbs
-	i.operators["neg"] = opNeg
-	i.operators["count"] = opCount
+    i.operators["sub"] = opSub
+    i.operators["mul"] = opMul
+    i.operators["div"] = opDiv
+    i.operators["idiv"] = opIdiv
+    i.operators["mod"] = opMod
+    i.operators["abs"] = opAbs
+    i.operators["neg"] = opNeg
+    i.operators["sqrt"] = opSqrt
+    i.operators["ceiling"] = opCeil
+    i.operators["floor"] = opFloor
+    i.operators["round"] = opRound
 
+	// stack manipulation
+	i.operators["dup"] = opDup
+    i.operators["pop"] = opPop
+    i.operators["exch"] = opExch
+    i.operators["clear"] = opClear
+    i.operators["count"] = opCount
+
+	// comparison
+	i.operators["eq"] = opEq
+    i.operators["ne"] = opNe
+    i.operators["gt"] = opGt
+    i.operators["ge"] = opGe
+    i.operators["lt"] = opLt
+    i.operators["le"] = opLe
+
+	// boolean
+	i.operators["and"] = opAnd
+    i.operators["or"] = opOr
+    i.operators["not"] = opNot
+    i.operators["true"] = opTrue
+    i.operators["false"] = opFalse
+	
+	// dictionary
+	
 	// TODO: Add missing operators 
 }
 
