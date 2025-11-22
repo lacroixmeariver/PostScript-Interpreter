@@ -10,7 +10,7 @@ import (
 // opAdd adds 2 operands
 func opAdd(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	y, _ := i.opStack.Pop()
@@ -35,7 +35,7 @@ func opAdd(i *Interpreter) error {
 // opSub subtracts one operand from the other
 func opSub(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	y, _ := i.opStack.Pop()
@@ -60,7 +60,7 @@ func opSub(i *Interpreter) error {
 // opMul multiplies one operand by the other
 func opMul(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	y, _ := i.opStack.Pop()
@@ -85,7 +85,7 @@ func opMul(i *Interpreter) error {
 // opDiv divides one operand by the other
 func opDiv(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	y, _ := i.opStack.Pop()
@@ -114,7 +114,7 @@ func opDiv(i *Interpreter) error {
 // opIdiv performs integer division
 func opIdiv(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	y, _ := i.opStack.Pop()
@@ -143,7 +143,7 @@ func opIdiv(i *Interpreter) error {
 // opMod performs modulo operation
 func opMod(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	y, _ := i.opStack.Pop()
@@ -172,7 +172,7 @@ func opMod(i *Interpreter) error {
 // opSqrt calculates square root
 func opSqrt(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 	x, _ := i.opStack.Pop()
 
@@ -190,7 +190,7 @@ func opSqrt(i *Interpreter) error {
 // opCeil returns ceiling of number
 func opCeil(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	x, _ := i.opStack.Pop()
@@ -209,7 +209,7 @@ func opCeil(i *Interpreter) error {
 // opFloor returns floor of number
 func opFloor(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	x, _ := i.opStack.Pop()
@@ -228,7 +228,7 @@ func opFloor(i *Interpreter) error {
 // opRound rounds to nearest integer
 func opRound(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
-		return fmt.Errorf("not enough items")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	x, _ := i.opStack.Pop()
@@ -247,7 +247,7 @@ func opRound(i *Interpreter) error {
 // opAbs takes absolute value
 func opAbs(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
-		return fmt.Errorf("not enough elements in stack")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	val, _ := i.opStack.Pop()
@@ -268,7 +268,7 @@ func opAbs(i *Interpreter) error {
 // opNeg negates a number
 func opNeg(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
-		return fmt.Errorf("not enough elements in the stack")
+		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
 
 	val, _ := i.opStack.Pop()
