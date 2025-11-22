@@ -2,6 +2,8 @@ package main
 
 import "fmt"
 
+// ================================== Dictionary operations
+
 // dOpDict creates a PSDict  with given capacity and pushes it onto the opStack
 func dOpDict(i *Interpreter) error {
 

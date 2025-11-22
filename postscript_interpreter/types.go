@@ -12,6 +12,9 @@ type PSBlock struct {
 }
 
 // defining the dictionary
-type PSDict map[string]PSConstant
+type PSDict struct {
+	items map[string]PSConstant
+	capacity int
+}
 
-//type PSOperator func (*Interpreter) error
+type PSOperator func (*Interpreter) error

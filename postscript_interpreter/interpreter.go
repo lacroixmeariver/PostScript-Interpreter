@@ -13,11 +13,14 @@ type Interpreter struct {
 
 // function acting like a constructor
 func CreateInterpreter() *Interpreter {
-	globalDict := make(PSDict)
+	globalDict := & PSDict{
+		items: make(map[string]PSConstant),
+		capacity: 100,
+	}
 
 	interpreter := &Interpreter{
 		opStack:     CreateStack(),
-		dictStack:   []*PSDict{&globalDict},
+		dictStack:   []*PSDict{globalDict},
 		lexicalMode: false,
 		operators:   make(map[string]func(*Interpreter) error),
 	}
@@ -64,8 +67,14 @@ func (i *Interpreter) registerOperators() {
     i.operators["not"] = opNot
     i.operators["true"] = opTrue
     i.operators["false"] = opFalse
-	
+
 	// dictionary
+	i.operators["dict"] = dOpDict
+	i.operators["begin"] = dOpBegin
+	i.operators["end"] = dOpEnd
+	i.operators["def"] = dOpDef
+	i.operators["length"] = dOpLength
+	i.operators["maxlength"] = dOpMaxLength
 	
 	// TODO: Add missing operators 
 }
