@@ -13,8 +13,8 @@ type Interpreter struct {
 
 // function acting like a constructor
 func CreateInterpreter() *Interpreter {
-	globalDict := & PSDict{
-		items: make(map[string]PSConstant),
+	globalDict := &PSDict{
+		items:    make(map[string]PSConstant),
 		capacity: 100,
 	}
 
@@ -32,41 +32,41 @@ func CreateInterpreter() *Interpreter {
 // creating dictionary of register operators and their associated functions
 func (i *Interpreter) registerOperators() {
 
-	// arithmetic 
+	// arithmetic
 	i.operators["add"] = opAdd
-    i.operators["sub"] = opSub
-    i.operators["mul"] = opMul
-    i.operators["div"] = opDiv
-    i.operators["idiv"] = opIdiv
-    i.operators["mod"] = opMod
-    i.operators["abs"] = opAbs
-    i.operators["neg"] = opNeg
-    i.operators["sqrt"] = opSqrt
-    i.operators["ceiling"] = opCeil
-    i.operators["floor"] = opFloor
-    i.operators["round"] = opRound
+	i.operators["sub"] = opSub
+	i.operators["mul"] = opMul
+	i.operators["div"] = opDiv
+	i.operators["idiv"] = opIdiv
+	i.operators["mod"] = opMod
+	i.operators["abs"] = opAbs
+	i.operators["neg"] = opNeg
+	i.operators["sqrt"] = opSqrt
+	i.operators["ceiling"] = opCeil
+	i.operators["floor"] = opFloor
+	i.operators["round"] = opRound
 
 	// stack manipulation
 	i.operators["dup"] = opDup
-    i.operators["pop"] = opPop
-    i.operators["exch"] = opExch
-    i.operators["clear"] = opClear
-    i.operators["count"] = opCount
+	i.operators["pop"] = opPop
+	i.operators["exch"] = opExch
+	i.operators["clear"] = opClear
+	i.operators["count"] = opCount
 
 	// comparison
 	i.operators["eq"] = opEq
-    i.operators["ne"] = opNe
-    i.operators["gt"] = opGt
-    i.operators["ge"] = opGe
-    i.operators["lt"] = opLt
-    i.operators["le"] = opLe
+	i.operators["ne"] = opNe
+	i.operators["gt"] = opGt
+	i.operators["ge"] = opGe
+	i.operators["lt"] = opLt
+	i.operators["le"] = opLe
 
 	// boolean
 	i.operators["and"] = opAnd
-    i.operators["or"] = opOr
-    i.operators["not"] = opNot
-    i.operators["true"] = opTrue
-    i.operators["false"] = opFalse
+	i.operators["or"] = opOr
+	i.operators["not"] = opNot
+	i.operators["true"] = opTrue
+	i.operators["false"] = opFalse
 
 	// dictionary
 	i.operators["dict"] = dOpDict
@@ -75,8 +75,8 @@ func (i *Interpreter) registerOperators() {
 	i.operators["def"] = dOpDef
 	i.operators["length"] = dOpLength
 	i.operators["maxlength"] = dOpMaxLength
-	
-	// TODO: Add missing operators 
+
+	// TODO: Add missing operators
 }
 
 func (i *Interpreter) Execute(tokens []Token) error {

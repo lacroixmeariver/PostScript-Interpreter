@@ -1,7 +1,6 @@
-// Entry point 
+// Entry point
 package main
 
-func main(){
-	
-}
+func main() {
 
+}

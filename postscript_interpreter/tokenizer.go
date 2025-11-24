@@ -124,7 +124,6 @@ func (t *Tokenizer) readName() Token {
 	return Token{Type: TOKEN_NAME, Value: PSName(name)}
 }
 
-
 func (t *Tokenizer) readNumber() Token {
 	start := t.pos
 	hasDecimal := false

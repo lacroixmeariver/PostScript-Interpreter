@@ -1,0 +1,30 @@
+repos:
+  - repo: local
+    hooks:
+      - id: golangci-lint
+        name: golangci-lint
+        entry: bash -c 'cd postscript_interpreter && golangci-lint run'
+        language: system
+        pass_filenames: false
+        files: \.go$
+
+      - id: go-fmt
+        name: go fmt
+        entry: bash -c 'cd postscript_interpreter && go fmt ./...'
+        language: system
+        pass_filenames: false
+        files: \.go$
+
+      - id: go-vet
+        name: go vet
+        entry: bash -c 'cd postscript_interpreter && go vet ./...'
+        language: system
+        pass_filenames: false
+        files: \.go$
+
+      - id: go-mod-tidy
+        name: go mod tidy
+        entry: bash -c 'cd postscript_interpreter && go mod tidy'
+        language: system
+        pass_filenames: false
+        files: \.go$

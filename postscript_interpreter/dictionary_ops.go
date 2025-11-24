@@ -11,7 +11,7 @@ func dOpDict(i *Interpreter) error {
 	cap := capacity.(int)
 
 	dictionary := &PSDict{
-		items: make(map[string]PSConstant),
+		items:    make(map[string]PSConstant),
 		capacity: cap, // useful for max length
 	}
 
@@ -62,13 +62,13 @@ func dOpDef(i *Interpreter) error {
 	value, _ := i.opStack.Pop()
 	k, _ := i.opStack.Pop()
 
-	var key string 
-	switch val := k.(type){
+	var key string
+	switch val := k.(type) {
 	case PSName:
 		key = string(val)
 	case string:
 		key = val
-	default: 
+	default:
 		return fmt.Errorf("string or constant expected")
 	}
 
