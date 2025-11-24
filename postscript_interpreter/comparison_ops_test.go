@@ -352,13 +352,13 @@ func TestComparisonWithBooleanLogic(t *testing.T) {
 
 	interp.opStack.Push(5)
 	interp.opStack.Push(3)
-	opGt(interp)
+	_ = opGt(interp)
 
 	interp.opStack.Push(2)
 	interp.opStack.Push(1)
-	opGt(interp)
+	_ = opGt(interp)
 
-	opAnd(interp)
+	_ = opAnd(interp)
 
 	result, _ := interp.opStack.Pop()
 	if result != true {
@@ -372,10 +372,10 @@ func TestComparisonWithArithmetic(t *testing.T) {
 
 	interp.opStack.Push(3)
 	interp.opStack.Push(4)
-	opAdd(interp)
+	_ = opAdd(interp)
 
 	interp.opStack.Push(10)
-	opLt(interp)
+	_ = opLt(interp)
 
 	result, _ := interp.opStack.Pop()
 	if result != true {
@@ -388,13 +388,13 @@ func TestComparisonSymmetry(t *testing.T) {
 	interp1 := CreateInterpreter()
 	interp1.opStack.Push(3)
 	interp1.opStack.Push(5)
-	opLt(interp1)
+	_ = opLt(interp1)
 	result1, _ := interp1.opStack.Pop()
 
 	interp2 := CreateInterpreter()
 	interp2.opStack.Push(5)
 	interp2.opStack.Push(3)
-	opGt(interp2)
+	_ = opGt(interp2)
 	result2, _ := interp2.opStack.Pop()
 
 	if result1 != result2 {

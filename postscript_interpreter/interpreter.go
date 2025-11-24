@@ -9,6 +9,7 @@ type Interpreter struct {
 	dictStack   []*PSDict                           // stack of dictionaries
 	lexicalMode bool                                // for dynamic/lexical scoping
 	operators   map[string]func(*Interpreter) error // map of operators and values
+	quit        bool
 }
 
 // function acting like a constructor
@@ -76,6 +77,22 @@ func (i *Interpreter) registerOperators() {
 	i.operators["length"] = dOpLength
 	i.operators["maxlength"] = dOpMaxLength
 
+	// flow control 
+	i.operators["if"] = opIf
+	i.operators["ifelse"] = opIfElse
+	i.operators["for"] = opFor
+	i.operators["repeat"] = opRepeat
+
+	// input/output
+	i.operators["="] = opPrint
+
+	// string operations
+	i.operators["get"] = opGet
+	i.operators["getinterval"] = opGetInterval
+
+
+	
+
 	// TODO: Add missing operators
 }
 
@@ -83,6 +100,10 @@ func (i *Interpreter) Execute(tokens []Token) error {
 	pos := 0
 	for pos < len(tokens) {
 		token := tokens[pos]
+
+		if i.quit {
+			break
+		}
 		switch token.Type {
 		// if it's a value type, push it onto the stack
 		case TOKEN_BOOL:
@@ -113,7 +134,6 @@ func (i *Interpreter) Execute(tokens []Token) error {
 			if err != nil {
 				return err
 			}
-
 		// if it's the start of a code block
 		case TOKEN_BLOCK_START:
 			proc, newPos, err := i.buildProcedure(tokens, pos)
@@ -123,7 +143,7 @@ func (i *Interpreter) Execute(tokens []Token) error {
 
 			i.opStack.Push(proc)
 			pos = newPos
-
+			continue
 		// this shouldn't happen but if it hits the end of a code block
 		case TOKEN_BLOCK_END:
 			return fmt.Errorf("how'd you get here")

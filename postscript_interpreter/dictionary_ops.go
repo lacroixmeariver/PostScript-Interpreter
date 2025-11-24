@@ -81,12 +81,9 @@ func dOpDef(i *Interpreter) error {
 // dOpLength pushes the length of the current dictionary onto the opStack
 func dOpLength(i *Interpreter) error {
 
-	if len(i.dictStack) < 1 {
-		return fmt.Errorf("dict stack underflow, not enough elements in the stack")
-	}
-
-	currentDict := i.dictStack[len(i.dictStack)-1]
-	result := len(currentDict.items)
+	val, _ := i.opStack.Pop()
+	dict := val.(*PSDict)
+	result := len(dict.items)
 	i.opStack.Push(result)
 	return nil
 }

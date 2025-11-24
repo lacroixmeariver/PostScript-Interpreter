@@ -35,8 +35,8 @@ func TestOpIfElse(t *testing.T) {
 		{Type: TOKEN_INT, Value: 1},
 		{Type: TOKEN_INT, Value: 2},
 		{Type: TOKEN_OPERATOR, Value: "add"},
-		// {1 2 sub} as else block procedure
 		{Type: TOKEN_BLOCK_END},
+		// {1 2 sub} as else block procedure
 		{Type: TOKEN_BLOCK_START},
 		{Type: TOKEN_INT, Value: 1},
 		{Type: TOKEN_INT, Value: 2},

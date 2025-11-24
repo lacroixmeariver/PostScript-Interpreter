@@ -33,9 +33,18 @@ func TestOpTrue(t *testing.T) {
 func TestOpTrueMultiplePushes(t *testing.T) {
 	interp := CreateInterpreter()
 
-	opTrue(interp)
-	opTrue(interp)
-	opTrue(interp)
+	err1 := opTrue(interp)
+	if err1 != nil {
+		t.Fatalf("opTrue failed: %v", err1)
+	}
+	err2 := opTrue(interp)
+	if err2 != nil {
+		t.Fatalf("opTrue failed: %v", err2)
+	}
+	err3 := opTrue(interp)
+	if err3 != nil {
+		t.Fatalf("opTrue failed: %v", err3)
+	}
 
 	if interp.opStack.StackCount() != 3 {
 		t.Errorf("expected 3 items on stack, got %d", interp.opStack.StackCount())
@@ -70,8 +79,12 @@ func TestOpFalse(t *testing.T) {
 func TestOpFalseMultiplePushes(t *testing.T) {
 	interp := CreateInterpreter()
 
-	opFalse(interp)
-	opFalse(interp)
+	err := opFalse(interp)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	_ = opFalse(interp)
 
 	if interp.opStack.StackCount() != 2 {
 		t.Errorf("expected 2 items on stack, got %d", interp.opStack.StackCount())
@@ -231,10 +244,10 @@ func TestBooleanSimpleExpression(t *testing.T) {
 	// Expected: (true || false) = true, !true = false
 	interp := CreateInterpreter()
 
-	opTrue(interp)
-	opFalse(interp)
-	opOr(interp)
-	opNot(interp)
+	_ = opTrue(interp)
+	_ = opFalse(interp)
+	_ = opOr(interp)
+	_ = opNot(interp)
 
 	result, _ := interp.opStack.Pop()
 	if result != false {
@@ -247,11 +260,11 @@ func TestBooleanChainedOr(t *testing.T) {
 	// Expected: (true || true) = true, (true || false) = true
 	interp := CreateInterpreter()
 
-	opTrue(interp)
-	opTrue(interp)
-	opOr(interp)
-	opFalse(interp)
-	opOr(interp)
+	_ = opTrue(interp)
+	_ = opTrue(interp)
+	_ = opOr(interp)
+	_ = opFalse(interp)
+	_ = opOr(interp)
 
 	result, _ := interp.opStack.Pop()
 	if result != true {
@@ -264,10 +277,10 @@ func TestBooleanNegationWithOr(t *testing.T) {
 	// Expected: !false = true, (true || true) = true
 	interp := CreateInterpreter()
 
-	opFalse(interp)
-	opNot(interp)
-	opTrue(interp)
-	opOr(interp)
+	_ = opFalse(interp)
+	_ = opNot(interp)
+	_ = opTrue(interp)
+	_ = opOr(interp)
 
 	result, _ := interp.opStack.Pop()
 	if result != true {
@@ -280,10 +293,10 @@ func TestBooleanComplexExpression(t *testing.T) {
 	// Expected: !false = true, (true || true) = true
 	interp := CreateInterpreter()
 
-	opTrue(interp)
-	opFalse(interp)
-	opNot(interp)
-	opOr(interp)
+	_ = opTrue(interp)
+	_ = opFalse(interp)
+	_ = opNot(interp)
+	_ = opOr(interp)
 
 	result, _ := interp.opStack.Pop()
 	if result != true {
