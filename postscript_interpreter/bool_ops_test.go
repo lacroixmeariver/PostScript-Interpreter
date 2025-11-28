@@ -5,53 +5,54 @@ import (
 )
 
 /*
-   Disclosure: The tests in this file were written using Generative AI.
-*/
+ -----------------------------------------------------------------------------
+	Note: Parts of these tests were drafted with the use of Generative AI.
+	All test content and logic has been reviewed and verified manually.
+ ----------------------------------------------------------------------------- 
+*/ 
 
-// ========================================
-// BOOLEAN CONSTANT OPERATORS
-// ========================================
+// boolean constant operators ========================================
 
 func TestOpTrue(t *testing.T) {
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	err := opTrue(interp)
+	err := opTrue(testInterpreter)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if interp.opStack.StackCount() != 1 {
-		t.Errorf("expected 1 item on stack, got %d", interp.opStack.StackCount())
+	if testInterpreter.opStack.StackCount() != 1 {
+		t.Errorf("expected 1 item on stack, got %d", testInterpreter.opStack.StackCount())
 	}
 
-	result, _ := interp.opStack.Pop()
+	result, _ := testInterpreter.opStack.Pop()
 	if result != true {
 		t.Errorf("expected true, got %v", result)
 	}
 }
 
 func TestOpTrueMultiplePushes(t *testing.T) {
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	err1 := opTrue(interp)
+	err1 := opTrue(testInterpreter)
 	if err1 != nil {
 		t.Fatalf("opTrue failed: %v", err1)
 	}
-	err2 := opTrue(interp)
+	err2 := opTrue(testInterpreter)
 	if err2 != nil {
 		t.Fatalf("opTrue failed: %v", err2)
 	}
-	err3 := opTrue(interp)
+	err3 := opTrue(testInterpreter)
 	if err3 != nil {
 		t.Fatalf("opTrue failed: %v", err3)
 	}
 
-	if interp.opStack.StackCount() != 3 {
-		t.Errorf("expected 3 items on stack, got %d", interp.opStack.StackCount())
+	if testInterpreter.opStack.StackCount() != 3 {
+		t.Errorf("expected 3 items on stack, got %d", testInterpreter.opStack.StackCount())
 	}
 
 	for i := 0; i < 3; i++ {
-		result, _ := interp.opStack.Pop()
+		result, _ := testInterpreter.opStack.Pop()
 		if result != true {
 			t.Errorf("expected true at position %d, got %v", i, result)
 		}
@@ -59,48 +60,46 @@ func TestOpTrueMultiplePushes(t *testing.T) {
 }
 
 func TestOpFalse(t *testing.T) {
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	err := opFalse(interp)
+	err := opFalse(testInterpreter)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if interp.opStack.StackCount() != 1 {
-		t.Errorf("expected 1 item on stack, got %d", interp.opStack.StackCount())
+	if testInterpreter.opStack.StackCount() != 1 {
+		t.Errorf("expected 1 item on stack, got %d", testInterpreter.opStack.StackCount())
 	}
 
-	result, _ := interp.opStack.Pop()
+	result, _ := testInterpreter.opStack.Pop()
 	if result != false {
 		t.Errorf("expected false, got %v", result)
 	}
 }
 
 func TestOpFalseMultiplePushes(t *testing.T) {
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	err := opFalse(interp)
+	err := opFalse(testInterpreter)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	_ = opFalse(interp)
+	opFalse(testInterpreter)
 
-	if interp.opStack.StackCount() != 2 {
-		t.Errorf("expected 2 items on stack, got %d", interp.opStack.StackCount())
+	if testInterpreter.opStack.StackCount() != 2 {
+		t.Errorf("expected 2 items on stack, got %d", testInterpreter.opStack.StackCount())
 	}
 
 	for i := 0; i < 2; i++ {
-		result, _ := interp.opStack.Pop()
+		result, _ := testInterpreter.opStack.Pop()
 		if result != false {
 			t.Errorf("expected false at position %d, got %v", i, result)
 		}
 	}
 }
 
-// ========================================
-// LOGICAL NOT OPERATOR
-// ========================================
+// logical not operations =======================================
 
 func TestOpNot(t *testing.T) {
 	tests := []struct {
@@ -112,46 +111,44 @@ func TestOpNot(t *testing.T) {
 		{"not false", false, true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.input)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.input)
 
-			err := opNot(interp)
+			err := opNot(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("not(%v): expected %v, got %v", tt.input, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("not(%v): expected %v, got %v", test.input, test.expected, result)
 			}
 		})
 	}
 }
 
 func TestOpNotStackUnderflow(t *testing.T) {
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	err := opNot(interp)
+	err := opNot(testInterpreter)
 	if err == nil {
 		t.Error("expected stack underflow error")
 	}
 }
 
 func TestOpNotTypeError(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(5) // Not a boolean
+	testInterpreter := CreateInterpreter()
+	testInterpreter.opStack.Push(5) // not a boolean val
 
-	err := opNot(interp)
+	err := opNot(testInterpreter)
 	if err == nil {
-		t.Error("expected type error for non-boolean")
+		t.Error("expected type error for non-boolean value")
 	}
 }
 
-// ========================================
-// LOGICAL OR OPERATOR
-// ========================================
+// logical or operations =======================================
 
 func TestOpOr(t *testing.T) {
 	tests := []struct {
@@ -165,20 +162,20 @@ func TestOpOr(t *testing.T) {
 		{"false or false", false, false, false},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opOr(interp)
+			err := opOr(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("or(%v, %v): expected %v, got %v", tt.a, tt.b, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("or(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
 			}
 		})
 	}
@@ -193,15 +190,15 @@ func TestOpOrStackUnderflow(t *testing.T) {
 		{"one item only", 1},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
 
-			for i := 0; i < tt.stackItems; i++ {
-				interp.opStack.Push(true)
+			for i := 0; i < test.stackItems; i++ {
+				testInterpreter.opStack.Push(true)
 			}
 
-			err := opOr(interp)
+			err := opOr(testInterpreter)
 			if err == nil {
 				t.Error("expected stack underflow error")
 			}
@@ -221,13 +218,13 @@ func TestOpOrTypeError(t *testing.T) {
 		{"bool and string", false, "world"},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opOr(interp)
+			err := opOr(testInterpreter)
 			if err == nil {
 				t.Error("expected type error")
 			}
@@ -235,76 +232,78 @@ func TestOpOrTypeError(t *testing.T) {
 	}
 }
 
-// ========================================
-// BOOLEAN INTEGRATION TESTS
-// ========================================
+// boolean integration tests ===============================
 
 func TestBooleanSimpleExpression(t *testing.T) {
-	// Test: true false or not
-	// Expected: (true || false) = true, !true = false
-	interp := CreateInterpreter()
+	// testing logical or/not against true/false values
+	// expected values: true, false
+	testInterpreter := CreateInterpreter()
 
-	_ = opTrue(interp)
-	_ = opFalse(interp)
-	_ = opOr(interp)
-	_ = opNot(interp)
+	// stack visual: [empty]
+	opTrue(testInterpreter) // stack visual: [true]
+	opFalse(testInterpreter) // stack visual: [true, false]
+	opOr(testInterpreter) // stack visual: [true] - results in true
+	opNot(testInterpreter) // stack visual: [false] - results in false
 
-	result, _ := interp.opStack.Pop()
+	result, _ := testInterpreter.opStack.Pop()
 	if result != false {
 		t.Errorf("expected false, got %v", result)
 	}
 }
 
 func TestBooleanChainedOr(t *testing.T) {
-	// Test: true true or false or
-	// Expected: (true || true) = true, (true || false) = true
-	interp := CreateInterpreter()
+	// testing logical or against true/false values
+	// expected values: true, true
+	testInterpreter := CreateInterpreter()
 
-	_ = opTrue(interp)
-	_ = opTrue(interp)
-	_ = opOr(interp)
-	_ = opFalse(interp)
-	_ = opOr(interp)
+	// stack visual: [empty]
+	opTrue(testInterpreter) // stack visual: [true]
+	opTrue(testInterpreter) // stack visual: [true, true]
+	opOr(testInterpreter) // stack visual: [true] - results in true
+	opFalse(testInterpreter) // stack visual: [true, false]
+	opOr(testInterpreter) // stack visual: [true] - results in true
 
-	result, _ := interp.opStack.Pop()
+	result, _ := testInterpreter.opStack.Pop()
 	if result != true {
 		t.Errorf("expected true, got %v", result)
 	}
 }
 
 func TestBooleanNegationWithOr(t *testing.T) {
-	// Test: false not true or
-	// Expected: !false = true, (true || true) = true
-	interp := CreateInterpreter()
+	// testing logical or/not against true/false values
+	// expected values: true, true
+	testInterpreter := CreateInterpreter()
 
-	_ = opFalse(interp)
-	_ = opNot(interp)
-	_ = opTrue(interp)
-	_ = opOr(interp)
+	// stack visual: [empty]
+	opFalse(testInterpreter) // stack visual: [false]
+	opNot(testInterpreter) // stack visual: [true] - results in true
+	opTrue(testInterpreter) // stack visual: [true, true]
+	opOr(testInterpreter) // stack visual: [true] - results in true
 
-	result, _ := interp.opStack.Pop()
+	result, _ := testInterpreter.opStack.Pop()
 	if result != true {
 		t.Errorf("expected true, got %v", result)
 	}
 }
 
 func TestBooleanComplexExpression(t *testing.T) {
-	// Test: true false not or
-	// Expected: !false = true, (true || true) = true
-	interp := CreateInterpreter()
+	// testing logical or/not against true/false values
+	// Expected: true, true
+	testInterpreter := CreateInterpreter()
 
-	_ = opTrue(interp)
-	_ = opFalse(interp)
-	_ = opNot(interp)
-	_ = opOr(interp)
+	// stack visual: [empty]
+	opTrue(testInterpreter) // stack visual: [true]
+	opFalse(testInterpreter) // stack visual: [true, false]
+	opNot(testInterpreter) // stack visual: [true, true] - results in true 
+	opOr(testInterpreter) // stack visual: [true] - results in true
 
-	result, _ := interp.opStack.Pop()
+	result, _ := testInterpreter.opStack.Pop()
 	if result != true {
 		t.Errorf("expected true, got %v", result)
 	}
 
-	// Verify stack is empty after operation
-	if interp.opStack.StackCount() != 0 {
-		t.Errorf("expected empty stack, got %d items", interp.opStack.StackCount())
+	// verifying stack emptiness
+	if testInterpreter.opStack.StackCount() != 0 {
+		t.Errorf("expected empty stack, got %d items", testInterpreter.opStack.StackCount())
 	}
 }
