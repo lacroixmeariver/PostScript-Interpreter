@@ -14,11 +14,13 @@ type Interpreter struct {
 
 // function acting like a constructor
 func CreateInterpreter() *Interpreter {
+	// initializing global dictionary
 	globalDict := &PSDict{
 		items:    make(map[string]PSConstant),
 		capacity: 100,
 	}
 
+	// initializing interpreter
 	interpreter := &Interpreter{
 		opStack:     CreateStack(),
 		dictStack:   []*PSDict{globalDict},
@@ -26,6 +28,7 @@ func CreateInterpreter() *Interpreter {
 		operators:   make(map[string]func(*Interpreter) error),
 	}
 
+	// populating operator dictionary with all the available operators
 	interpreter.registerOperators()
 	return interpreter
 }
@@ -38,7 +41,7 @@ func (i *Interpreter) registerOperators() {
 	i.operators["sub"] = opSub
 	i.operators["mul"] = opMul
 	i.operators["div"] = opDiv
-	i.operators["idiv"] = opIdiv
+	i.operators["idiv"] = opIntdiv
 	i.operators["mod"] = opMod
 	i.operators["abs"] = opAbs
 	i.operators["neg"] = opNeg
@@ -77,27 +80,41 @@ func (i *Interpreter) registerOperators() {
 	i.operators["length"] = dOpLength
 	i.operators["maxlength"] = dOpMaxLength
 
-	// flow control 
+	// flow control
 	i.operators["if"] = opIf
 	i.operators["ifelse"] = opIfElse
 	i.operators["for"] = opFor
 	i.operators["repeat"] = opRepeat
+	i.operators["quit"] = opQuit
+	i.operators["exec"] = opExec
 
 	// input/output
-	i.operators["="] = opPrint
+	i.operators["print"] = opPrint
+	i.operators["="] = opEquals
+	i.operators["=="] = opEqualsEquals
 
 	// string operations
 	i.operators["get"] = opGet
 	i.operators["getinterval"] = opGetInterval
-
-
-	
-
-	// TODO: Add missing operators
+	i.operators["putinterval"] = opPutInterval
 }
 
+// helper function to be able to search for a value through the dict stack
+func (i *Interpreter) dictLookup(name string) (PSConstant, error) {
+	index := len(i.dictStack) - 1
+	for index >= 0 {
+		if val, ok := i.dictStack[index].items[name]; ok {
+			return val, nil
+		}
+		index--
+	}
+	return nil, fmt.Errorf("name undefined in dictionary stack")
+}
+
+// executes operation based on token type from list of tokens given as argument
 func (i *Interpreter) Execute(tokens []Token) error {
 	pos := 0
+
 	for pos < len(tokens) {
 		token := tokens[pos]
 
@@ -119,34 +136,41 @@ func (i *Interpreter) Execute(tokens []Token) error {
 			i.opStack.Push(token.Value)
 
 		case TOKEN_NAME:
-			val := token.Value
-			name := PSName(val.(string))
+			name := token.Value.(PSName)
 			i.opStack.Push(name)
 
 		// if it's an operator type, search for it in the dictionary
 		case TOKEN_OPERATOR:
 			val := token.Value.(string)
 			opFunc, ok := i.operators[val]
-			if !ok {
-				return fmt.Errorf("operator not defined")
+			if ok {
+				err := opFunc(i)
+				if err != nil {
+					return err
+				}
+			} else {
+				value, err := i.dictLookup(val)
+				if err != nil {
+					return err
+				}
+				i.opStack.Push(value)
 			}
-			err := opFunc(i)
-			if err != nil {
-				return err
-			}
+
 		// if it's the start of a code block
 		case TOKEN_BLOCK_START:
-			proc, newPos, err := i.buildProcedure(tokens, pos)
+			procedure, newPos, err := i.buildProcedure(tokens, pos)
 			if err != nil {
 				return err
 			}
 
-			i.opStack.Push(proc)
+			i.opStack.Push(procedure)
 			pos = newPos
+
 			continue
-		// this shouldn't happen but if it hits the end of a code block
+
+		// this shouldn't happen but if it hits the end of a code block an error is returned
 		case TOKEN_BLOCK_END:
-			return fmt.Errorf("how'd you get here")
+			return fmt.Errorf("how'd you get here?")
 		}
 
 		pos++
@@ -155,9 +179,11 @@ func (i *Interpreter) Execute(tokens []Token) error {
 	return nil
 }
 
+// the building of a code block/procedure 
 func (i *Interpreter) buildProcedure(tokens []Token, startPos int) (PSBlock, int, error) {
 	blockTokens := []Token{}
-	depthCounter := 1
+
+	depthCounter := 1 // for nested procedures
 	pos := startPos + 1
 
 	for depthCounter > 0 && pos < len(tokens) {
@@ -169,6 +195,7 @@ func (i *Interpreter) buildProcedure(tokens []Token, startPos int) (PSBlock, int
 
 		if currentToken.Type == TOKEN_BLOCK_END {
 			depthCounter--
+			// depth counter being 0 means the procedure block is done
 			if depthCounter == 0 {
 				pos++
 				break
@@ -185,9 +212,14 @@ func (i *Interpreter) buildProcedure(tokens []Token, startPos int) (PSBlock, int
 		return PSBlock{}, pos, fmt.Errorf("unclosed procedure")
 	}
 
-	proc := PSBlock{
+	procedure := PSBlock{
 		Body: blockTokens,
 	}
 
-	return proc, pos, nil
+	// adding snapshot to associated captured dictionary for lexical mode
+	if i.lexicalMode {
+		procedure.CapturedDict = i.dictStack[len(i.dictStack)-1]
+	}
+
+	return procedure, pos, nil
 }
