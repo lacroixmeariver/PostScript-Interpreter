@@ -21,25 +21,19 @@ A PostScript interpreter implementation written in Go. Supports a subset of Post
 - Go 1.23 or higher
 
 ## Build and Run 
-- Ensure you are in the correct `postscript_interpreter` directory by entering: `cd postscript_interpreter`
-- then to build:
-`go build`
-- and run using: 
-`go run .` - for dynamic scoping (default setting)
-- `go run . -lex` for lexical scoping
+Ensure you are in the correct `postscript_interpreter` directory by entering: `cd postscript_interpreter` \
+then to build: `go build` \
+and run using: `go run .` - for dynamic scoping (default setting) \
+`go run . -lex` for lexical scoping
 
 ## General REPL info
-- The number displayed in REPL parenthesis: `PS (#)>` represents number of items in operand stack.
-- To **exit** the REPL, type `quit`
+The number displayed in REPL parenthesis: `PS (#)>` represents number of items in operand stack. \
+To **exit** the REPL, type `quit`
 
 ## Run Tests
-- Ensure you are in the correct `postscript_interpreter` directory by entering:
-`cd postscript_interpreter`
-then to run all tests in verbose mode:
-`go test -v`
-
-to check test coverage: 
-`go test -cover`
+Ensure you are in the correct `postscript_interpreter` directory by entering: `cd postscript_interpreter`\
+then to run all tests in verbose mode: `go test -v` \
+to check test coverage: `go test -cover`
 
 ## Supported commands
 Coming soon.. 
