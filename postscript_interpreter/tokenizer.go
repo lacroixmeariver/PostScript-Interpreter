@@ -20,20 +20,25 @@ const (
 	TOKEN_BOOL
 )
 
+// defining the structure of a token
 type Token struct {
 	Type  TokenType
-	Value interface{}
+	Value any
 }
 
+// defining structure of actual tokenizer
 type Tokenizer struct {
 	input string // input string
-	pos   int    // individual character or position
+	pos   int    // individual position within token
 }
 
+// constructor
 func CreateTokenizer(input string) *Tokenizer {
 	return &Tokenizer{input: input, pos: 0}
 }
 
+// tokenize function for breaking up input into 
+// tokens interpreter will recognize
 func (t *Tokenizer) Tokenize() ([]Token, error) {
 	tokens := []Token{}
 
@@ -43,36 +48,55 @@ func (t *Tokenizer) Tokenize() ([]Token, error) {
 			break
 		}
 
-		ch := t.input[t.pos] // current character
+		currentChar := t.input[t.pos]
 
 		// depending on token type
 		switch {
-		case ch == '%': // ignore comment
-			t.skipComment()
-		case ch == '(': // string
-			token, err := t.readString()
+
+		case currentChar == '%': // ignore comment
+			t.skipComment() // helper function to skip it
+
+		case currentChar == '(': // string
+			token, err := t.readString() // helper function to read strings
+
 			if err != nil {
 				return nil, err
 			}
+
 			tokens = append(tokens, token)
-		case ch == '{':
-			// code block
+
+		case currentChar == '{': // start of code block
 			t.pos++
-			tokens = append(tokens, Token{Type: TOKEN_BLOCK_START})
-		case ch == '}':
+			// recognized as start token and appended
+			tokens = append(tokens, Token{Type: TOKEN_BLOCK_START}) 
+
+		case currentChar == '}': // end of code block
 			t.pos++
+			// recognized and appended
 			tokens = append(tokens, Token{Type: TOKEN_BLOCK_END})
-		case ch == '/':
+
+		case currentChar == '/':
 			// variable logic
-			token := t.readName()
+			token := t.readName() // helper function to read name without '\'
 			tokens = append(tokens, token)
-		case IsDigit(ch) || (ch == '-' && t.pos+1 < len(t.input) && IsDigit(t.input[t.pos+1])):
+
+		case currentChar == '=': // recognizing '=' and '==' as operators 
+			t.pos++
+			if t.pos < len(t.input) && t.input[t.pos] == '=' {
+				t.pos++
+				tokens = append(tokens, Token{Type: TOKEN_OPERATOR, Value: "=="})
+			} else {
+				tokens = append(tokens, Token{Type: TOKEN_OPERATOR, Value: "="})
+			}
+
+		case IsDigit(currentChar) || (currentChar == '-' && t.pos+1 < len(t.input) && IsDigit(t.input[t.pos+1])):
 			token := t.readNumber()
 			tokens = append(tokens, token)
 
-		case IsLetter(ch):
-			token := t.readOperator()
+		case IsLetter(currentChar):
+			token := t.readWord()
 			tokens = append(tokens, token)
+
 		default:
 			t.pos++
 		}
@@ -81,7 +105,7 @@ func (t *Tokenizer) Tokenize() ([]Token, error) {
 	return tokens, nil
 }
 
-// helper funcs
+// tokenizer helper functions =================================================
 
 func (t *Tokenizer) skipWhitespace() {
 	for t.pos < len(t.input) && IsWhitespace(t.input[t.pos]) {
@@ -110,6 +134,7 @@ func (t *Tokenizer) readString() (Token, error) {
 	value := t.input[start:t.pos]
 	t.pos++
 
+	// returning it as a string type token
 	return Token{Type: TOKEN_STRING, Value: value}, nil
 }
 
@@ -149,8 +174,8 @@ func (t *Tokenizer) readNumber() Token {
 
 }
 
-// parses through operator and assigns value from the name
-func (t *Tokenizer) readOperator() Token {
+// parses through word and assigns value from the name
+func (t *Tokenizer) readWord() Token {
 	start := t.pos
 
 	for t.pos < len(t.input) && IsLetter(t.input[t.pos]) {
@@ -168,7 +193,7 @@ func (t *Tokenizer) readOperator() Token {
 	return Token{Type: TOKEN_OPERATOR, Value: op}
 }
 
-// Some helper functions to determine if a symbol is a comment, number, alpha value, or whitespace
+// some additional helper functions to determine if a symbol is a comment, number, alpha value, or whitespace
 
 func IsComment(ch byte) bool {
 	return ch == '%'
