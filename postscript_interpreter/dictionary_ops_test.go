@@ -135,25 +135,25 @@ func TestOpDef(t *testing.T) {
 	}
 }
 
-func TestOpLength(t *testing.T) {
-	// test: 10 dict /x 5 def /y 10 def length
-	// Dictionary with 2 items should return length 2
-	tokens := []Token{
-		// newDict(10) entry: [x = 5], [y = 10]
-		{Type: TOKEN_INT, Value: 10},
-		{Type: TOKEN_OPERATOR, Value: "dict"},
-		{Type: TOKEN_OPERATOR, Value: "dup"},
-		{Type: TOKEN_OPERATOR, Value: "begin"},
-		{Type: TOKEN_NAME, Value: PSName("x")},
-		{Type: TOKEN_INT, Value: 5},
-		{Type: TOKEN_OPERATOR, Value: "def"},
-		{Type: TOKEN_NAME, Value: PSName("y")},
-		{Type: TOKEN_INT, Value: 10},
-		{Type: TOKEN_OPERATOR, Value: "def"},
-		{Type: TOKEN_OPERATOR, Value: "end"},
-		{Type: TOKEN_OPERATOR, Value: "length"},
+func TestOpLengthDictionary(t *testing.T) {
+	testInterpreter := CreateInterpreter()
+	
+	// create dictionary 
+	dict := &PSDict{
+		items:    make(map[string]PSConstant),
+		capacity: 10,
 	}
-
-	testInterpreter := executeTest(t, tokens)
-	compareStackTop(t, testInterpreter, 2)
+	// add 3 items
+	dict.items["x"] = 5
+	dict.items["y"] = 10
+	dict.items["z"] = 15
+	
+	testInterpreter.opStack.Push(dict)
+	
+	err := opLength(testInterpreter)
+	if err != nil {
+		t.Fatalf("opLength failed: %v", err)
+	}
+	
+	compareStackTop(t, testInterpreter, 3)
 }
