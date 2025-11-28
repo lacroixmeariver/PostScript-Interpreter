@@ -16,17 +16,17 @@ func opAdd(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	numY, err := ToNumber(y)
+	yToNum, err := ToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	result := numX + numY
+	result := xToNum + yToNum
 	i.opStack.Push(result)
 
 	return nil
@@ -41,17 +41,17 @@ func opSub(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	numY, err := ToNumber(y)
+	yToNum, err := ToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	result := numX - numY
+	result := xToNum - yToNum
 	i.opStack.Push(result)
 
 	return nil
@@ -66,17 +66,17 @@ func opMul(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	numY, err := ToNumber(y)
+	yToNum, err := ToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	result := numX * numY
+	result := xToNum * yToNum
 	i.opStack.Push(result)
 
 	return nil
@@ -91,28 +91,31 @@ func opDiv(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	numY, err := ToNumber(y)
+	yToNum, err := ToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	if numY == 0 {
+	if yToNum == 0 {
 		return fmt.Errorf("divide by zero error")
 	}
 
-	result := numX / numY
+	result := xToNum / yToNum
 	i.opStack.Push(result)
 
 	return nil
 }
 
-// opIdiv performs integer division
-func opIdiv(i *Interpreter) error {
+// integer division operators 
+
+// opIntdiv performs integer division
+func opIntdiv(i *Interpreter) error {
+
 	if i.opStack.StackCount() < 2 {
 		return fmt.Errorf("stack underflow, not enough elements in stack")
 	}
@@ -120,21 +123,21 @@ func opIdiv(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	numY, err := ToNumber(y)
+	yToNum, err := ToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	if numY == 0 {
+	if yToNum == 0 {
 		return fmt.Errorf("divide by zero error")
 	}
 
-	result := numX / numY
+	result := xToNum / yToNum
 	i.opStack.Push(int(result))
 
 	return nil
@@ -149,21 +152,21 @@ func opMod(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	numY, err := ToNumber(y)
+	yToNum, err := ToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	if numY == 0 {
+	if yToNum == 0 {
 		return fmt.Errorf("divide by zero error")
 	}
 
-	result := int(numX) % int(numY)
+	result := int(xToNum) % int(yToNum)
 	i.opStack.Push(result)
 
 	return nil
@@ -176,12 +179,12 @@ func opSqrt(i *Interpreter) error {
 	}
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	result := math.Sqrt(numX)
+	result := math.Sqrt(xToNum)
 
 	i.opStack.Push(result)
 	return nil
@@ -195,12 +198,12 @@ func opCeil(i *Interpreter) error {
 
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	result := math.Ceil(numX)
+	result := math.Ceil(xToNum)
 
 	i.opStack.Push(result)
 	return nil
@@ -214,12 +217,12 @@ func opFloor(i *Interpreter) error {
 
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	result := math.Floor(numX)
+	result := math.Floor(xToNum)
 
 	i.opStack.Push(result)
 	return nil
@@ -233,18 +236,18 @@ func opRound(i *Interpreter) error {
 
 	x, _ := i.opStack.Pop()
 
-	numX, err := ToNumber(x)
+	xToNum, err := ToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	result := math.Round(numX)
+	result := math.Round(xToNum)
 
 	i.opStack.Push(result)
 	return nil
 }
 
-// opAbs takes absolute value
+// opAbs takes absolute value of given number
 func opAbs(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
 		return fmt.Errorf("stack underflow, not enough elements in stack")

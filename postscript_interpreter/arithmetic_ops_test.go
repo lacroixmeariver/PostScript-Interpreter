@@ -5,41 +5,47 @@ import (
 )
 
 /*
-	Disclosure: The tests in this file were written using Generative AI.
-*/
+ -----------------------------------------------------------------------------
+	Note: Parts of these tests were drafted with the use of Generative AI.
+	All test content and logic has been reviewed and verified manually.
+ ----------------------------------------------------------------------------- 
+*/ 
 
-// ========================================
-// BASIC ARITHMETIC OPERATORS
-// ========================================
+// basic arithmetic tests ============================================================
+// add, sub, mul, div
 
 func TestOpAdd(t *testing.T) {
+
+	// populating list of tests
 	tests := []struct {
-		name     string
-		x, y     interface{}
-		expected float64
+		name     string  // name of the test being run
+		x, y     any     // operands
+		expected float64 // expected value
 	}{
-		{"positive integers", 3, 4, 7.0},
-		{"negative integers", -5, -3, -8.0},
-		{"mixed signs", 10, -3, 7.0},
-		{"with zero", 5, 0, 5.0},
-		{"floats", 3.5, 2.5, 6.0},
-		{"int and float", 5, 2.5, 7.5},
+		{"positive integer addition", 3, 4, 7},
+		{"negative integer addition", -5, -3, -8},
+		{"mixed sign integer addition", 10, -3, 7},
+		{"zero addition", 5, 0, 5},
+		{"floating point addition", 3.2, 2.5, 5.7},
+		{"floating point and integer addition", 5, 2.5, 7.5},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.x)
-			interp.opStack.Push(tt.y)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.x)
+			testInterpreter.opStack.Push(test.y)
 
-			err := opAdd(interp)
+			// error present
+			err := opAdd(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected add error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("add(%v, %v): expected %v, got %v", tt.x, tt.y, tt.expected, result)
+			// obtaining result from top of stack
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("add(%v, %v): expected %v, got %v", test.x, test.y, test.expected, result)
 			}
 		})
 	}
@@ -48,30 +54,32 @@ func TestOpAdd(t *testing.T) {
 func TestOpSub(t *testing.T) {
 	tests := []struct {
 		name     string
-		x, y     interface{}
+		x, y     any
 		expected float64
 	}{
-		{"positive integers", 10, 3, 7.0},
-		{"negative result", 3, 10, -7.0},
-		{"negative integers", -5, -3, -2.0},
-		{"with zero", 5, 0, 5.0},
-		{"floats", 5.5, 2.5, 3.0},
+		{"positive integer subtraction", 10, 3, 7},
+		{"mixed sign integer subtraction", 3, 10, -7},
+		{"negative integer subtraction", -5, -3, -2},
+		{"zero subtraction", 5, 0, 5.0},
+		{"floating point subtraction", 5.7, 2.5, 3.2},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.x)
-			interp.opStack.Push(tt.y)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.x)
+			testInterpreter.opStack.Push(test.y)
 
-			err := opSub(interp)
+			// error occurred
+			err := opSub(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected sub error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("sub(%v, %v): expected %v, got %v", tt.x, tt.y, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("sub(%v, %v): expected %v, got %v", test.x, test.y, test.expected, result)
 			}
 		})
 	}
@@ -80,30 +88,30 @@ func TestOpSub(t *testing.T) {
 func TestOpMul(t *testing.T) {
 	tests := []struct {
 		name     string
-		x, y     interface{}
+		x, y     any
 		expected float64
 	}{
-		{"positive integers", 5, 3, 15.0},
-		{"with zero", 5, 0, 0.0},
-		{"negative integers", -5, 3, -15.0},
-		{"both negative", -5, -3, 15.0},
-		{"floats", 2.5, 4.0, 10.0},
+		{"integer multiplication", 5, 5, 25},
+		{"mixed sign multiplication", -2, 5, -10},
+		{"negative integer multiplication", -1, -5, 5},
+		{"floating point multiplication", 2.5, 2, 5.0},
 	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.x)
+			testInterpreter.opStack.Push(test.y)
+			err := opMul(testInterpreter)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.x)
-			interp.opStack.Push(tt.y)
-
-			err := opMul(interp)
+			//error
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected mul error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("mul(%v, %v): expected %v, got %v", tt.x, tt.y, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("mul(%v, %v): expected: %v, got: %v", test.x, test.y, test.expected, result)
 			}
 		})
 	}
@@ -112,55 +120,55 @@ func TestOpMul(t *testing.T) {
 func TestOpDiv(t *testing.T) {
 	tests := []struct {
 		name     string
-		x, y     interface{}
+		x, y     any
 		expected float64
 	}{
-		{"simple division", 10, 2, 5.0},
-		{"division with remainder", 10, 3, 3.3333333333333335},
-		{"negative dividend", -10, 2, -5.0},
-		{"negative divisor", 10, -2, -5.0},
-		{"both negative", -10, -2, 5.0},
-		{"floats", 7.5, 2.5, 3.0},
+		{"integer division", 10, 2, 5},
+		{"integer division with remainder", 10, 3, 3.3333333333333335},
+		{"negative dividend", -10, 2, -5},
+		{"negative divisor", 10, -2, -5},
+		{"both negative", -10, -2, 5},
+		{"floating point division", 7.5, 2.5, 3.0},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.x)
-			interp.opStack.Push(tt.y)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.x)
+			testInterpreter.opStack.Push(test.y)
 
-			err := opDiv(interp)
+			// error
+			err := opDiv(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected div error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("div(%v, %v): expected %v, got %v", tt.x, tt.y, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("div(%v, %v): expected %v, got %v", test.x, test.y, test.expected, result)
 			}
 		})
 	}
 }
 
 func TestOpDivByZero(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(10)
-	interp.opStack.Push(0)
+	testInterpreter := CreateInterpreter()
+	testInterpreter.opStack.Push(10)
+	testInterpreter.opStack.Push(0)
 
-	err := opDiv(interp)
+	err := opDiv(testInterpreter)
 	if err == nil {
 		t.Error("expected division by zero error")
 	}
 }
 
-// ========================================
-// INTEGER ARITHMETIC OPERATORS
-// ========================================
+// integer division tests =====================================================
 
-func TestOpIdiv(t *testing.T) {
+func TestOpIntdiv(t *testing.T) {
 	tests := []struct {
 		name     string
-		x, y     interface{}
+		x, y     any
 		expected int
 	}{
 		{"simple division", 10, 3, 3},
@@ -172,31 +180,34 @@ func TestOpIdiv(t *testing.T) {
 		{"float inputs", 10.8, 3.2, 3},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.x)
-			interp.opStack.Push(tt.y)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.x)
+			testInterpreter.opStack.Push(test.y)
 
-			err := opIdiv(interp)
+			// error
+			err := opIntdiv(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected idiv error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("idiv(%v, %v): expected %v, got %v", tt.x, tt.y, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("idiv(%v, %v): expected %v, got %v", test.x, test.y, test.expected, result)
 			}
 		})
 	}
 }
 
-func TestOpIdivByZero(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(10)
-	interp.opStack.Push(0)
+func TestOpIntdivByZero(t *testing.T) {
+	testInterpreter := CreateInterpreter()
+	testInterpreter.opStack.Push(10)
+	testInterpreter.opStack.Push(0)
 
-	err := opIdiv(interp)
+	// error
+	err := opIntdiv(testInterpreter)
 	if err == nil {
 		t.Error("expected division by zero error")
 	}
@@ -205,7 +216,7 @@ func TestOpIdivByZero(t *testing.T) {
 func TestOpMod(t *testing.T) {
 	tests := []struct {
 		name     string
-		x, y     interface{}
+		x, y     any
 		expected int
 	}{
 		{"simple modulo", 10, 3, 1},
@@ -216,66 +227,69 @@ func TestOpMod(t *testing.T) {
 		{"large numbers", 100, 7, 2},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.x)
-			interp.opStack.Push(tt.y)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.x)
+			testInterpreter.opStack.Push(test.y)
 
-			err := opMod(interp)
+			// error
+			err := opMod(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected mod error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("mod(%v, %v): expected %v, got %v", tt.x, tt.y, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("mod(%v, %v): expected %v, got %v", test.x, test.y, test.expected, result)
 			}
 		})
 	}
 }
 
 func TestOpModByZero(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(10)
-	interp.opStack.Push(0)
+	testInterpreter := CreateInterpreter()
+	testInterpreter.opStack.Push(10)
+	testInterpreter.opStack.Push(0)
 
-	err := opMod(interp)
+	// error
+	err := opMod(testInterpreter)
 	if err == nil {
 		t.Error("expected division by zero error")
 	}
 }
 
-// ========================================
-// UNARY ARITHMETIC OPERATORS
-// ========================================
+// unary operations =============================================
 
 func TestOpAbs(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		expected float64
 	}{
-		{"positive integer", 5, 5.0},
-		{"negative integer", -5, 5.0},
-		{"zero", 0, 0.0},
+		{"positive integer", 5, 5},
+		{"negative integer", -5, 5},
+		{"zero", 0, 0},
 		{"positive float", 3.14, 3.14},
 		{"negative float", -3.14, 3.14},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.input)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.input)
 
-			err := opAbs(interp)
+			// error 
+			err := opAbs(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected abs error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("abs(%v): expected %v, got %v", tt.input, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("abs(%v): expected %v, got %v", test.input, test.expected, result)
 			}
 		})
 	}
@@ -284,29 +298,31 @@ func TestOpAbs(t *testing.T) {
 func TestOpNeg(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		expected float64
 	}{
-		{"positive integer", 5, -5.0},
-		{"negative integer", -5, 5.0},
+		{"positive integer", 5, -5},
+		{"negative integer", -5, 5},
 		{"zero", 0, 0.0},
 		{"positive float", 3.14, -3.14},
 		{"negative float", -3.14, 3.14},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.input)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.input)
 
-			err := opNeg(interp)
+			// error
+			err := opNeg(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected neg error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("neg(%v): expected %v, got %v", tt.input, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("neg(%v): expected %v, got %v", test.input, test.expected, result)
 			}
 		})
 	}
@@ -315,69 +331,71 @@ func TestOpNeg(t *testing.T) {
 func TestOpSqrt(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		expected float64
 	}{
-		{"perfect square 9", 9, 3.0},
-		{"perfect square 16", 16, 4.0},
-		{"perfect square 25", 25, 5.0},
+		{"perfect square 9", 9, 3},
+		{"perfect square 16", 16, 4},
+		{"perfect square 25", 25, 5},
 		{"non-perfect square", 2, 1.4142135623730951},
-		{"large number", 100, 10.0},
-		{"zero", 0, 0.0},
+		{"large number", 100, 10},
+		{"zero", 0, 0},
 		{"decimal", 0.25, 0.5},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.input)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.input)
 
-			err := opSqrt(interp)
+			// error
+			err := opSqrt(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected sqrt error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
 			resultFloat, _ := result.(float64)
-			if resultFloat != tt.expected {
-				t.Errorf("sqrt(%v): expected %v, got %v", tt.input, tt.expected, result)
+			if resultFloat != test.expected {
+				t.Errorf("sqrt(%v): expected %v, got %v", test.input, test.expected, result)
 			}
 		})
 	}
 }
 
-// ========================================
-// ROUNDING OPERATORS
-// ========================================
+// rounding operations ===============================================
 
 func TestOpCeiling(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		expected float64
 	}{
-		{"round up low decimal", 3.2, 4.0},
-		{"round up high decimal", 3.8, 4.0},
+		{"round up low decimal", 3.2, 4},
+		{"round up high decimal", 3.8, 4},
 		{"already integer", 3.0, 3.0},
-		{"negative round up", -4.8, -4.0},
-		{"negative low decimal", -4.2, -4.0},
-		{"small positive", 0.1, 1.0},
-		{"small negative", -0.1, 0.0},
+		{"negative round up", -4.8, -4},
+		{"negative low decimal", -4.2, -4},
+		{"small positive", 0.1, 1},
+		{"small negative", -0.1, 0},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.input)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.input)
 
-			err := opCeil(interp)
+			// error 
+			err := opCeil(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected ceiling error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("ceiling(%v): expected %v, got %v", tt.input, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("ceiling(%v): expected %v, got %v", test.input, test.expected, result)
 			}
 		})
 	}
@@ -386,31 +404,33 @@ func TestOpCeiling(t *testing.T) {
 func TestOpFloor(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		expected float64
 	}{
-		{"round down low decimal", 3.2, 3.0},
-		{"round down high decimal", 3.8, 3.0},
-		{"already integer", 3.0, 3.0},
-		{"negative round down", -4.8, -5.0},
-		{"negative high decimal", -4.2, -5.0},
-		{"small positive", 0.9, 0.0},
-		{"small negative", -0.1, -1.0},
+		{"round down low decimal", 3.2, 3},
+		{"round down high decimal", 3.8, 3},
+		{"already integer", 3.0, 3},
+		{"negative round down", -4.8, -5},
+		{"negative high decimal", -4.2, -5},
+		{"small positive", 0.9, 0},
+		{"small negative", -0.1, -1},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.input)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.input)
 
-			err := opFloor(interp)
+			// error
+			err := opFloor(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected floor error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("floor(%v): expected %v, got %v", tt.input, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("floor(%v): expected %v, got %v", test.input, test.expected, result)
 			}
 		})
 	}
@@ -419,40 +439,40 @@ func TestOpFloor(t *testing.T) {
 func TestOpRound(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    interface{}
+		input    any
 		expected float64
 	}{
-		{"round down", 3.2, 3.0},
-		{"round up at half", 3.5, 4.0},
-		{"round up", 3.8, 4.0},
-		{"already integer", 3.0, 3.0},
-		{"negative round down", -4.8, -5.0},
-		{"negative round up", -4.2, -4.0},
-		{"negative at half", -4.5, -5.0},
-		{"positive at half", 0.5, 1.0},
+		{"round down", 3.2, 3},
+		{"round up at half", 3.5, 4},
+		{"round up", 3.8, 4},
+		{"already integer", 3.0, 3},
+		{"negative round down", -4.8, -5},
+		{"negative round up", -4.2, -4},
+		{"negative at half", -4.5, -5},
+		{"positive at half", 0.5, 1},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.input)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.input)
 
-			err := opRound(interp)
+			// error
+			err := opRound(testInterpreter)
 			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
+				t.Fatalf("unexpected round error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("round(%v): expected %v, got %v", tt.input, tt.expected, result)
+			// result checking
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("round(%v): expected %v, got %v", test.input, test.expected, result)
 			}
 		})
 	}
 }
 
-// ========================================
-// ERROR HANDLING TESTS
-// ========================================
+// error handling for stack underflow errors
 
 func TestArithmeticStackUnderflow(t *testing.T) {
 	tests := []struct {
@@ -463,7 +483,7 @@ func TestArithmeticStackUnderflow(t *testing.T) {
 		{"sub underflow", opSub},
 		{"mul underflow", opMul},
 		{"div underflow", opDiv},
-		{"idiv underflow", opIdiv},
+		{"idiv underflow", opIntdiv},
 		{"mod underflow", opMod},
 		{"abs underflow", opAbs},
 		{"neg underflow", opNeg},
@@ -473,11 +493,11 @@ func TestArithmeticStackUnderflow(t *testing.T) {
 		{"round underflow", opRound},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
 
-			err := tt.op(interp)
+			err := test.op(testInterpreter)
 			if err == nil {
 				t.Error("expected stack underflow error")
 			}
