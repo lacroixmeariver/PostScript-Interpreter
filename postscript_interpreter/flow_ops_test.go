@@ -4,12 +4,20 @@ import (
 	"testing"
 )
 
+/*
+ -----------------------------------------------------------------------------
+	Note: Parts of these tests were drafted with the use of Generative AI.
+	All test content and logic has been reviewed and verified manually.
+ ----------------------------------------------------------------------------- 
+*/ 
+
 func TestOpIf(t *testing.T) {
 	// testing if block
-	// Expected block to execute is {1 2 add}
+	// expected value: 3 from {1 2 add} block
 	i := CreateInterpreter()
 
 	tokens := []Token{
+		// stack: [true, {1 2 add}, if]
 		{Type: TOKEN_BOOL, Value: true},
 		{Type: TOKEN_BLOCK_START},
 		{Type: TOKEN_INT, Value: 1},
@@ -24,11 +32,11 @@ func TestOpIf(t *testing.T) {
 
 func TestOpIfElse(t *testing.T) {
 	// testing ifelse block
-	// Expected block to execute is {1 2 sub}
+	// expected value: -1 from {1 2 sub} block
 	i := CreateInterpreter()
 
 	tokens := []Token{
-		// bool value is false
+		// stack: [false, {1 2 add}, {1 2 sub}, ifelse]
 		{Type: TOKEN_BOOL, Value: false},
 		// {1 2 add} as the if block/procedure
 		{Type: TOKEN_BLOCK_START},
@@ -50,11 +58,11 @@ func TestOpIfElse(t *testing.T) {
 
 func TestOpFor(t *testing.T) {
 	// testing for loop
-	// Expected result should be 3 at the top of the stack
+	// expected value: 3 at the top of the stack
 	i := CreateInterpreter()
 
 	tokens := []Token{
-		// {0 1 3}
+		// stack: [0, 1, 3, {}, for]
 		{Type: TOKEN_INT, Value: 0}, // starting value
 		{Type: TOKEN_INT, Value: 1}, // step value
 		{Type: TOKEN_INT, Value: 3}, // ending value
@@ -69,11 +77,11 @@ func TestOpFor(t *testing.T) {
 
 func TestOpRepeat(t *testing.T) {
 	// testing repeat function
-	// Expected result should be 2 at the top of the stack
+	// expected value: 2 at the top of the stack
 	i := CreateInterpreter()
 
 	tokens := []Token{
-		// {1 2 3 4 5}
+		// stack: [1, 2, 3, 4, 5, 3, {=}, repeat]
 		{Type: TOKEN_INT, Value: 1},
 		{Type: TOKEN_INT, Value: 2},
 		{Type: TOKEN_INT, Value: 3},
@@ -98,13 +106,13 @@ func TestOpQuit(t *testing.T) {
 		{Type: TOKEN_INT, Value: 1}, // pushes to stack
 		{Type: TOKEN_OPERATOR, Value: "quit"},
 		{Type: TOKEN_INT, Value: 2}, // should not execute
-
 	}
+
 	i.Execute(tokens)
-	// if !i.quit {
-	// 	t.Fatal("quit flag expected to be true")
-	// }
+	if !i.quit {
+		t.Fatal("quit flag expected to be true")
+	}
+
 	checkStackCount(t, i, 1)
 	checkStackTop(t, i, 1)
-
 }
