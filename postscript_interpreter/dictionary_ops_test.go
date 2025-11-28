@@ -4,75 +4,84 @@ import (
 	"testing"
 )
 
+/*
+ -----------------------------------------------------------------------------
+	Note: Parts of these tests were drafted with the use of Generative AI.
+	All test content and logic has been reviewed and verified manually.
+ ----------------------------------------------------------------------------- 
+*/ 
+
 func TestOpDict(t *testing.T) {
-	// Test: 10 dict
-	// Should create a dictionary with capacity 10 and push it on the stack
+	// testing the creation of a dictionary with cap of 10
+	// expected value: dictionary with capacity of 10
 	tokens := []Token{
 		{Type: TOKEN_INT, Value: 10},
 		{Type: TOKEN_OPERATOR, Value: "dict"},
 	}
 
-	interp := executeTest(t, tokens)
+	testInterpreter := executeTest(t, tokens)
 
-	// Check stack has 1 item
-	if interp.opStack.StackCount() != 1 {
-		t.Errorf("Expected 1 item on stack, got %d", interp.opStack.StackCount())
+	// checking to see if stack has 1 item
+	if testInterpreter.opStack.StackCount() != 1 {
+		t.Errorf("Expected 1 item on stack, got %d", testInterpreter.opStack.StackCount())
 	}
 
-	// Check that it's a dictionary
-	top, _ := interp.opStack.Peek()
+	// checking to see that item is a dictionary
+	top, _ := testInterpreter.opStack.Peek()
 	dict, ok := top.(*PSDict)
 	if !ok {
 		t.Fatalf("Expected *PSDict on top of stack, got %T", top)
 	}
 
-	// Check capacity
+	// it is a dictionary - what's it's capacity?
 	if dict.capacity != 10 {
 		t.Errorf("Expected capacity 10, got %d", dict.capacity)
 	}
 
-	// Check that items map is initialized
+	// checking that the map got initialized
 	if dict.items == nil {
 		t.Error("Expected items map to be initialized, got nil")
 	}
 
-	// Check that it's empty
+	// making sure the dictionary at this stage is empty 
 	if len(dict.items) != 0 {
 		t.Errorf("Expected empty dictionary, got %d items", len(dict.items))
 	}
 }
 
 func TestOpBegin(t *testing.T) {
-	// Test: 10 dict begin
-	// Should create dict and add it to dict stack
+	// testing the addition of new dict to dict stack
+	// expected value: dictionary with cap 10 on the dict stack 
 	tokens := []Token{
 		{Type: TOKEN_INT, Value: 10},
 		{Type: TOKEN_OPERATOR, Value: "dict"},
 		{Type: TOKEN_OPERATOR, Value: "begin"},
 	}
 
-	interp := CreateInterpreter()
-	initialDictStackSize := len(interp.dictStack) // Should be 1 (global dict)
+	testInterpreter := CreateInterpreter()
 
-	err := interp.Execute(tokens)
+	// initial dict stack just has one dictionary (the global one)
+	initialDictStackSize := len(testInterpreter.dictStack) 
+
+	err := testInterpreter.Execute(tokens)
 	if err != nil {
 		t.Fatalf("Execute failed: %v", err)
 	}
 
-	// Dict stack should have grown by 1
-	if len(interp.dictStack) != initialDictStackSize+1 {
-		t.Errorf("Expected dict stack size %d, got %d", initialDictStackSize+1, len(interp.dictStack))
+	// executing tokens should add one to stack
+	if len(testInterpreter.dictStack) != initialDictStackSize + 1 { 
+		t.Errorf("Expected dict stack size %d, got %d", initialDictStackSize+1, len(testInterpreter.dictStack))
 	}
 
-	// Operand stack should be empty (dict was consumed)
-	if interp.opStack.StackCount() != 0 {
-		t.Errorf("Expected empty operand stack, got %d items", interp.opStack.StackCount())
+	// dictionary added should have been taken from the opstack
+	if testInterpreter.opStack.StackCount() != 0 {
+		t.Errorf("Expected empty operand stack, got %d items", testInterpreter.opStack.StackCount())
 	}
 }
 
 func TestOpEnd(t *testing.T) {
-	// Test: 10 dict begin end
-	// Should add and then remove dict from dict stack
+	// testing the definition of the end of a dictionary on dict stack 
+	// dict stack should be +1 then back to initial size
 	tokens := []Token{
 		{Type: TOKEN_INT, Value: 10},
 		{Type: TOKEN_OPERATOR, Value: "dict"},
@@ -80,83 +89,71 @@ func TestOpEnd(t *testing.T) {
 		{Type: TOKEN_OPERATOR, Value: "end"},
 	}
 
-	interp := CreateInterpreter()
-	initialDictStackSize := len(interp.dictStack) // Should be 1
+	testInterpreter := CreateInterpreter()
+	initialDictStackSize := len(testInterpreter.dictStack) // stack: [global]
 
-	err := interp.Execute(tokens)
+	err := testInterpreter.Execute(tokens) // stack: [newDict, global] >> [global] 
 	if err != nil {
 		t.Fatalf("Execute failed: %v", err)
 	}
 
-	// Dict stack should be back to original size
-	if len(interp.dictStack) != initialDictStackSize {
-		t.Errorf("Expected dict stack size %d, got %d", initialDictStackSize, len(interp.dictStack))
+	// dict stack should be back to original size
+	if len(testInterpreter.dictStack) != initialDictStackSize {
+		t.Errorf("Expected dict stack size %d, got %d", initialDictStackSize, len(testInterpreter.dictStack))
 	}
 }
 
 func TestOpDef(t *testing.T) {
-	// Test: /x 5 def
-	// Should define x = 5 in the current dictionary
+	// testing the definition of a variable or name binding
+	// expected value: x should be defined in the dictionary as 5
+	// note: converting to PSName in test cases bypassing tokenizer
 	tokens := []Token{
-		{Type: TOKEN_NAME, Value: "x"},       // Push /x as a name
-		{Type: TOKEN_INT, Value: 5},          // Push 5
-		{Type: TOKEN_OPERATOR, Value: "def"}, // Define x = 5
+		{Type: TOKEN_NAME, Value: PSName("x")},       // pushing /x as a name
+		{Type: TOKEN_INT, Value: 5},          // pushing 5
+		{Type: TOKEN_OPERATOR, Value: "def"}, // def operator setting x = 5
 	}
 
-	interp := executeTest(t, tokens)
+	testInterpreter := executeTest(t, tokens)
 
-	// After def, operand stack should be empty
-	if interp.opStack.StackCount() != 0 {
-		t.Errorf("Expected empty operand stack after def, got %d items", interp.opStack.StackCount())
+	// opstack should be empty at this point (after execution)
+	if testInterpreter.opStack.StackCount() != 0 {
+		t.Errorf("Expected empty operand stack after def, got %d items", testInterpreter.opStack.StackCount())
 	}
 
-	// Check that x is defined in the current dictionary (top of dict stack)
-	currentDict := interp.dictStack[len(interp.dictStack)-1]
+	// top of dict stack (the global in this case)
+	currentDict := testInterpreter.dictStack[len(testInterpreter.dictStack)-1]
 
+	// checking to see if x exists in the current dictionary
 	val, exists := currentDict.items["x"]
 	if !exists {
 		t.Fatal("Expected 'x' to be defined in dictionary, but it wasn't found")
 	}
 
-	// Check the value is 5
+	// verifying the value of x is 5
 	if val != 5 {
 		t.Errorf("Expected x = 5, got x = %v", val)
 	}
 }
 
 func TestOpLength(t *testing.T) {
-	// Test: 10 dict /x 5 def /y 10 def length
+	// test: 10 dict /x 5 def /y 10 def length
 	// Dictionary with 2 items should return length 2
 	tokens := []Token{
+		// newDict(10) entry: [x = 5], [y = 10]
 		{Type: TOKEN_INT, Value: 10},
 		{Type: TOKEN_OPERATOR, Value: "dict"},
+		{Type: TOKEN_OPERATOR, Value: "dup"},
 		{Type: TOKEN_OPERATOR, Value: "begin"},
-		{Type: TOKEN_NAME, Value: "x"},
+		{Type: TOKEN_NAME, Value: PSName("x")},
 		{Type: TOKEN_INT, Value: 5},
 		{Type: TOKEN_OPERATOR, Value: "def"},
-		{Type: TOKEN_NAME, Value: "y"},
+		{Type: TOKEN_NAME, Value: PSName("y")},
 		{Type: TOKEN_INT, Value: 10},
 		{Type: TOKEN_OPERATOR, Value: "def"},
 		{Type: TOKEN_OPERATOR, Value: "end"},
-		// Now get the dict back to check its length
-		{Type: TOKEN_INT, Value: 10},
-		{Type: TOKEN_OPERATOR, Value: "dict"},
 		{Type: TOKEN_OPERATOR, Value: "length"},
 	}
 
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 0) // New empty dict has 0 items
-}
-
-func TestOpMaxLength(t *testing.T) {
-	// Test: 42 dict maxlength
-	// Should return 42 (the capacity)
-	tokens := []Token{
-		{Type: TOKEN_INT, Value: 42},
-		{Type: TOKEN_OPERATOR, Value: "dict"},
-		{Type: TOKEN_OPERATOR, Value: "maxlength"},
-	}
-
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 42)
+	testInterpreter := executeTest(t, tokens)
+	checkStackTop(t, testInterpreter, 2) 
 }

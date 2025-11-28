@@ -12,7 +12,7 @@ func dOpDict(i *Interpreter) error {
 
 	dictionary := &PSDict{
 		items:    make(map[string]PSConstant),
-		capacity: cap, // useful for max length
+		capacity: cap,
 	}
 
 	i.opStack.Push(dictionary)
@@ -28,16 +28,12 @@ func dOpBegin(i *Interpreter) error {
 		return fmt.Errorf("stack underflow, not enough elements in the stack")
 	}
 
+	// conversion check
 	dict, ok := val.(*PSDict)
 	if !ok {
 		return fmt.Errorf("dictionary conversion failed")
 	}
 
-	dictCap := i.dictStack[len(i.dictStack)-1].capacity
-	currentLength := len(i.dictStack[len(i.dictStack)-1].items)
-	if currentLength >= dictCap {
-		return fmt.Errorf("dictionary capacity exceeded")
-	}
 	i.dictStack = append(i.dictStack, dict)
 	return nil
 }
@@ -59,9 +55,11 @@ func dOpDef(i *Interpreter) error {
 	if i.opStack.StackCount() < 2 {
 		return fmt.Errorf("stack underflow, not enough elements in the stack")
 	}
+
 	value, _ := i.opStack.Pop()
 	k, _ := i.opStack.Pop()
 
+	// accounting for conversion to PSName 
 	var key string
 	switch val := k.(type) {
 	case PSName:
