@@ -5,43 +5,19 @@ import (
 )
 
 /*
-	Disclosure: The tests in this file were reformatted using Generative AI to improve the structure
-	for clarity and readability. Content of tests were written by me.
-*/
+ -----------------------------------------------------------------------------
+	Note: Parts of these tests were drafted with the use of Generative AI.
+	All test content and logic has been reviewed and verified manually.
+ ----------------------------------------------------------------------------- 
+*/ 
 
-// ========================================
-// STACK MANIPULATION OPERATORS
-// ========================================
+// stack manipulation operations =============================================
 
+// testing to ensure dup works with different types of data
 func TestOpDup(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(10)
-
-	err := opDup(interp)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if interp.opStack.StackCount() != 2 {
-		t.Fatalf("expected 2 items on stack, got %d", interp.opStack.StackCount())
-	}
-
-	top, _ := interp.opStack.Pop()
-	second, _ := interp.opStack.Peek()
-
-	if top != second {
-		t.Errorf("dup failed: top=%v, second=%v (should be equal)", top, second)
-	}
-
-	if top != 10 {
-		t.Errorf("expected 10, got %v", top)
-	}
-}
-
-func TestOpDupWithDifferentTypes(t *testing.T) {
 	tests := []struct {
 		name  string
-		value interface{}
+		value any
 	}{
 		{"integer", 42},
 		{"float", 3.14},
@@ -49,131 +25,122 @@ func TestOpDupWithDifferentTypes(t *testing.T) {
 		{"boolean", true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.value)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.value)
 
-			opDup(interp)
+			opDup(testInterpreter)
 
-			if interp.opStack.StackCount() != 2 {
-				t.Fatalf("expected 2 items, got %d", interp.opStack.StackCount())
+			if testInterpreter.opStack.StackCount() != 2 {
+				t.Fatalf("expected 2 items, got %d", testInterpreter.opStack.StackCount())
 			}
 
-			top, _ := interp.opStack.Pop()
-			second, _ := interp.opStack.Pop()
+			first, _ := testInterpreter.opStack.Pop()
+			second, _ := testInterpreter.opStack.Pop()
 
-			if top != second || top != tt.value {
-				t.Errorf("dup failed for %v", tt.value)
+			if first != second || first != test.value {
+				t.Errorf("dup failed for %v", test.value)
 			}
 		})
 	}
 }
 
+// running multiple pop() operations
 func TestOpPop(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(5)
+	testInterpreter := CreateInterpreter()
+	testInterpreter.opStack.Push(1)
+	testInterpreter.opStack.Push(2)
+	testInterpreter.opStack.Push(3)
 
-	initialCount := interp.opStack.StackCount()
+	opPop(testInterpreter)
+	opPop(testInterpreter)
 
-	err := opPop(interp)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
+	if testInterpreter.opStack.StackCount() != 1 {
+		t.Errorf("expected 1 item remaining, got %d", testInterpreter.opStack.StackCount())
 	}
 
-	finalCount := interp.opStack.StackCount()
-
-	if finalCount != initialCount-1 {
-		t.Errorf("expected count to decrease by 1: initial=%d, final=%d", initialCount, finalCount)
-	}
-}
-
-func TestOpPopMultipleItems(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(1)
-	interp.opStack.Push(2)
-	interp.opStack.Push(3)
-
-	opPop(interp)
-	opPop(interp)
-
-	if interp.opStack.StackCount() != 1 {
-		t.Errorf("expected 1 item remaining, got %d", interp.opStack.StackCount())
-	}
-
-	remaining, _ := interp.opStack.Pop()
+	remaining, _ := testInterpreter.opStack.Pop()
 	if remaining != 1 {
 		t.Errorf("expected bottom item to be 1, got %v", remaining)
 	}
 }
 
 func TestOpExch(t *testing.T) {
-	interp := CreateInterpreter()
-	bottom := 10
-	top := 5
+	testInterpreter := CreateInterpreter()
+	second := 10
+	first := 5
 
-	interp.opStack.Push(bottom)
-	interp.opStack.Push(top)
+	// stack: [first, second]
+	testInterpreter.opStack.Push(second)
+	testInterpreter.opStack.Push(first)
 
-	err := opExch(interp)
+	// stack: [second, first]
+	err := opExch(testInterpreter)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	newTop, _ := interp.opStack.Peek()
-
-	if newTop != bottom {
-		t.Errorf("expected top to be %v after exchange, got %v", bottom, newTop)
+	// new first should be equal to second number
+	newTop, _ := testInterpreter.opStack.Peek()
+	if newTop != second {
+		t.Errorf("expected first to be %v after exchange, got %v", second, newTop)
 	}
 
-	interp.opStack.Pop()
-	newSecond, _ := interp.opStack.Pop()
-
-	if newSecond != top {
-		t.Errorf("expected second to be %v after exchange, got %v", top, newSecond)
+	testInterpreter.opStack.Pop()
+	newSecond, _ := testInterpreter.opStack.Pop()
+	if newSecond != first {
+		t.Errorf("expected second to be %v after exchange, got %v", first, newSecond)
 	}
 }
 
+// ensuring exch works on different types of data
 func TestOpExchWithDifferentTypes(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push("hello")
-	interp.opStack.Push(42)
+	testInterpreter := CreateInterpreter()
+	testInterpreter.opStack.Push("hello")
+	testInterpreter.opStack.Push(42)
 
-	opExch(interp)
+	err := opExch(testInterpreter)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
-	top, _ := interp.opStack.Pop()
-	second, _ := interp.opStack.Pop()
+	first, _ := testInterpreter.opStack.Pop()
+	second, _ := testInterpreter.opStack.Pop()
 
-	if top != "hello" || second != 42 {
-		t.Errorf("exch failed: got top=%v, second=%v", top, second)
+	if first != "hello" || second != 42 {
+		t.Errorf("exch failed: got first=%v, second=%v", first, second)
 	}
 }
 
 func TestOpClear(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(1)
-	interp.opStack.Push(2)
-	interp.opStack.Push(3)
+	testInterpreter := CreateInterpreter()
 
-	err := opClear(interp)
+	// stack: [1, 2, 3]
+	testInterpreter.opStack.Push(1)
+	testInterpreter.opStack.Push(2)
+	testInterpreter.opStack.Push(3)
+
+	err := opClear(testInterpreter)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if interp.opStack.StackCount() != 0 {
-		t.Errorf("expected empty stack, got %d items", interp.opStack.StackCount())
+	if testInterpreter.opStack.StackCount() != 0 {
+		t.Errorf("expected empty stack, got %d items", testInterpreter.opStack.StackCount())
 	}
 }
 
 func TestOpClearEmptyStack(t *testing.T) {
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	err := opClear(interp)
+	// stack: []
+	err := opClear(testInterpreter)
 	if err != nil {
 		t.Fatalf("unexpected error on empty stack: %v", err)
 	}
 
-	if interp.opStack.StackCount() != 0 {
+	if testInterpreter.opStack.StackCount() != 0 {
 		t.Errorf("expected stack to remain empty")
 	}
 }
@@ -189,56 +156,54 @@ func TestOpCount(t *testing.T) {
 		{"five items", 5},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
 
-			for i := 0; i < tt.itemCount; i++ {
-				interp.opStack.Push(i)
+			for i := 0; i < test.itemCount; i++ {
+				testInterpreter.opStack.Push(i)
 			}
 
-			err := opCount(interp)
+			err := opCount(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			count, _ := interp.opStack.Pop()
+			count, _ := testInterpreter.opStack.Pop()
 
-			if count != tt.itemCount {
-				t.Errorf("expected count %d, got %v", tt.itemCount, count)
+			if count != test.itemCount {
+				t.Errorf("expected count %d, got %v", test.itemCount, count)
 			}
 
-			// Verify original items still on stack
-			if interp.opStack.StackCount() != tt.itemCount {
-				t.Errorf("count modified stack: expected %d items, got %d", tt.itemCount, interp.opStack.StackCount())
+			// verifying original items still on stack
+			if testInterpreter.opStack.StackCount() != test.itemCount {
+				t.Errorf("count modified stack: expected %d items, got %d", test.itemCount, testInterpreter.opStack.StackCount())
 			}
 		})
 	}
 }
 
-// ========================================
-// INTEGRATION TESTS
-// ========================================
+// stack operations integration testing ===================================================
 
 func TestStackOpsChaining(t *testing.T) {
 	// Test: 1 2 3 dup exch pop
-	// Expected: [1, 2, 3] → [1, 2, 3, 3] → [1, 2, 3, 3] → [1, 2, 3]
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	interp.opStack.Push(1)
-	interp.opStack.Push(2)
-	interp.opStack.Push(3)
+	// stack: [1, 2, 3]
+	testInterpreter.opStack.Push(1)
+	testInterpreter.opStack.Push(2)
+	testInterpreter.opStack.Push(3)
 
-	opDup(interp)  // [1, 2, 3, 3]
-	opExch(interp) // [1, 2, 3, 3] (no change, exchanges top two which are same)
-	opPop(interp)  // [1, 2, 3]
+	opDup(testInterpreter)  // stack: [1, 2, 3, 3]
+	opExch(testInterpreter) // stack: [1, 2, 3, 3] (no change, exchanges first two which are same)
+	opPop(testInterpreter)  // stack: [1, 2, 3]
 
-	if interp.opStack.StackCount() != 3 {
-		t.Errorf("expected 3 items, got %d", interp.opStack.StackCount())
+	if testInterpreter.opStack.StackCount() != 3 {
+		t.Errorf("expected 3 items, got %d", testInterpreter.opStack.StackCount())
 	}
 
-	top, _ := interp.opStack.Pop()
-	if top != 3 {
-		t.Errorf("expected top to be 3, got %v", top)
+	first, _ := testInterpreter.opStack.Pop()
+	if first != 3 {
+		t.Errorf("expected first to be 3, got %v", first)
 	}
 }

@@ -1,6 +1,6 @@
 package main
 
-// =================================== Stack operations
+// =================================== stack operations
 
 // opDup duplicates top of stack and pushes it to top of stack
 func opDup(i *Interpreter) error {
@@ -40,6 +40,7 @@ func opClear(i *Interpreter) error {
 	for i.opStack.StackCount() > 0 {
 		i.opStack.Pop()
 	}
+	
 	return nil
 }
 
@@ -47,5 +48,6 @@ func opClear(i *Interpreter) error {
 func opCount(i *Interpreter) error {
 	count := i.opStack.StackCount()
 	i.opStack.Push(count)
+
 	return nil
 }
