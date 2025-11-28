@@ -5,7 +5,7 @@ import (
 	"math"
 )
 
-// ========================================= Arithmetic operators
+// arithmetic operators ====================================================
 
 // opAdd adds 2 operands
 func opAdd(i *Interpreter) error {
@@ -111,7 +111,7 @@ func opDiv(i *Interpreter) error {
 	return nil
 }
 
-// integer division operators 
+// integer division operators =========================================
 
 // opIntdiv performs integer division
 func opIntdiv(i *Interpreter) error {
@@ -172,6 +172,8 @@ func opMod(i *Interpreter) error {
 	return nil
 }
 
+// unary operations =================================================
+
 // opSqrt calculates square root
 func opSqrt(i *Interpreter) error {
 	if i.opStack.StackCount() < 1 {
@@ -189,6 +191,45 @@ func opSqrt(i *Interpreter) error {
 	i.opStack.Push(result)
 	return nil
 }
+
+// opAbs takes absolute value of given number
+func opAbs(i *Interpreter) error {
+	if i.opStack.StackCount() < 1 {
+		return fmt.Errorf("stack underflow, not enough elements in stack")
+	}
+
+	val, _ := i.opStack.Pop()
+	num, err := ToNumber(val)
+	if err != nil {
+		return err
+	}
+
+	if num < 0 {
+		num = -num
+	}
+
+	i.opStack.Push(num)
+
+	return nil
+}
+
+// opNeg negates a number
+func opNeg(i *Interpreter) error {
+	if i.opStack.StackCount() < 1 {
+		return fmt.Errorf("stack underflow, not enough elements in stack")
+	}
+
+	val, _ := i.opStack.Pop()
+	num, err := ToNumber(val)
+	if err != nil {
+		return err
+	}
+
+	i.opStack.Push(-num)
+	return nil
+}
+
+// rounding operations =============================================
 
 // opCeil returns ceiling of number
 func opCeil(i *Interpreter) error {
@@ -244,42 +285,5 @@ func opRound(i *Interpreter) error {
 	result := math.Round(xToNum)
 
 	i.opStack.Push(result)
-	return nil
-}
-
-// opAbs takes absolute value of given number
-func opAbs(i *Interpreter) error {
-	if i.opStack.StackCount() < 1 {
-		return fmt.Errorf("stack underflow, not enough elements in stack")
-	}
-
-	val, _ := i.opStack.Pop()
-	num, err := ToNumber(val)
-	if err != nil {
-		return err
-	}
-
-	if num < 0 {
-		num = -num
-	}
-
-	i.opStack.Push(num)
-
-	return nil
-}
-
-// opNeg negates a number
-func opNeg(i *Interpreter) error {
-	if i.opStack.StackCount() < 1 {
-		return fmt.Errorf("stack underflow, not enough elements in stack")
-	}
-
-	val, _ := i.opStack.Pop()
-	num, err := ToNumber(val)
-	if err != nil {
-		return err
-	}
-
-	i.opStack.Push(-num)
 	return nil
 }
