@@ -4,10 +4,11 @@ import (
 	"fmt"
 )
 
-// ================================ Comparison operators
+// ================================ comparison operations
 
 // opEq pushes true if two items are equal
 func opEq(i *Interpreter) error {
+	// error handling
 	if i.opStack.StackCount() < 2 {
 		return fmt.Errorf("stack underflow, not enough elements in the stack")
 	}
@@ -24,10 +25,18 @@ func opEq(i *Interpreter) error {
 		return nil
 	}
 
-	result := x == y
-	i.opStack.Push(result)
+	// trying as strings
+	strA, errA := x.(string)
+	strB, errB := y.(string)
 
-	return nil
+	if errA && errB {
+		result := strA == strB
+		i.opStack.Push(result)
+		return nil
+	}
+
+	// accounting for type mismatch
+	return fmt.Errorf("type mismatch, please ensure both elements are the same type")
 }
 
 // opNe pushes true if two items are not equal
@@ -48,10 +57,20 @@ func opNe(i *Interpreter) error {
 		return nil
 	}
 
-	result := x != y
-	i.opStack.Push(result)
+	// trying as strings
+	strA, errA := x.(string)
+	strB, errB := y.(string)
 
-	return nil
+	if errA && errB {
+		result := strA != strB
+		i.opStack.Push(result)
+		return nil
+	}
+
+	// accounting for type mismatch
+	return fmt.Errorf("type mismatch, please ensure both elements are the same type")
+
+
 }
 
 // opGe pushes true if one item is greater than or equal to the other

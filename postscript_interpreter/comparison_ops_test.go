@@ -19,7 +19,7 @@ func TestOpEq(t *testing.T) {
 		a, b     any
 		expected bool
 	}{
-		// Numbers
+		// numerical test values
 		{"equal ints", 5, 5, true},
 		{"unequal ints", 5, 3, false},
 		{"equal floats", 3.14, 3.14, true},
@@ -30,7 +30,7 @@ func TestOpEq(t *testing.T) {
 		{"negative equals", -5, -5, true},
 		{"negative not equals", -5, 5, false},
 
-		// Strings
+		// alpha test values
 		{"equal strings", "hello", "hello", true},
 		{"unequal strings", "hello", "world", false},
 		{"empty strings", "", "", true},
@@ -55,6 +55,7 @@ func TestOpEq(t *testing.T) {
 	}
 }
 
+// error testing for stack underflow 
 func TestOpEqStackUnderflow(t *testing.T) {
 	testInterpreter := CreateInterpreter()
 	testInterpreter.opStack.Push(5)
@@ -71,6 +72,7 @@ func TestOpNe(t *testing.T) {
 		a, b     any
 		expected bool
 	}{
+		// numerical test values
 		{"equal ints", 5, 5, false},
 		{"unequal ints", 5, 3, true},
 		{"equal floats", 3.14, 3.14, false},
@@ -80,7 +82,7 @@ func TestOpNe(t *testing.T) {
 		{"zero equals zero", 0, 0, false},
 		{"negative not equals positive", -5, 5, true},
 
-		// Strings
+		// alpha test values
 		{"equal strings", "hello", "hello", false},
 		{"unequal strings", "hello", "world", true},
 	}
@@ -104,9 +106,8 @@ func TestOpNe(t *testing.T) {
 	}
 }
 
-// ========================================
-// LESS THAN OPERATORS
-// ========================================
+
+// less than operations ===================================
 
 func TestOpLt(t *testing.T) {
 	tests := []struct {
@@ -114,28 +115,28 @@ func TestOpLt(t *testing.T) {
 		a, b     any
 		expected bool
 	}{
-		// Basic comparisons
+		// basic comparisons
 		{"less than", 3, 5, true},
 		{"greater than", 5, 3, false},
 		{"equal", 5, 5, false},
 
-		// Negative numbers
+		// negative numbers
 		{"negative less than negative", -5, -3, true},
 		{"negative greater than negative", -3, -5, false},
 		{"negative less than positive", -5, 3, true},
 		{"positive greater than negative", 3, -5, false},
 
-		// Zero comparisons
+		// zero comparisons
 		{"zero less than positive", 0, 5, true},
 		{"positive greater than zero", 5, 0, false},
 		{"zero greater than negative", 0, -5, false},
 
-		// Float comparisons
+		// float comparisons
 		{"float less than", 2.5, 3.7, true},
 		{"float greater than", 3.7, 2.5, false},
 		{"float equal", 3.14, 3.14, false},
 
-		// Mixed types
+		// mixed types
 		{"int less than float", 3, 3.5, true},
 		{"float less than int", 2.5, 3, true},
 	}
@@ -190,59 +191,8 @@ func TestOpLtStrings(t *testing.T) {
 	}
 }
 
-func TestOpLe(t *testing.T) {
-	tests := []struct {
-		name     string
-		a, b     any
-		expected bool
-	}{
-		// Basic comparisons
-		{"less than", 3, 5, true},
-		{"greater than", 5, 3, false},
-		{"equal", 5, 5, true},
 
-		// Negative numbers
-		{"negative less than negative", -5, -3, true},
-		{"negative equal", -5, -5, true},
-		{"negative greater than negative", -3, -5, false},
-
-		// Zero comparisons
-		{"zero equals zero", 0, 0, true},
-		{"zero less than positive", 0, 5, true},
-		{"positive greater than zero", 5, 0, false},
-
-		// Float comparisons
-		{"float less than", 2.5, 3.7, true},
-		{"float equal", 3.14, 3.14, true},
-		{"float greater than", 3.7, 2.5, false},
-
-		// Edge cases
-		{"very close floats equal", 3.14159, 3.14159, true},
-		{"very close floats less", 3.14158, 3.14159, true},
-	}
-
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			testInterpreter := CreateInterpreter()
-			testInterpreter.opStack.Push(test.a)
-			testInterpreter.opStack.Push(test.b)
-
-			err := opLe(testInterpreter)
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-
-			result, _ := testInterpreter.opStack.Pop()
-			if result != test.expected {
-				t.Errorf("le(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
-			}
-		})
-	}
-}
-
-// ========================================
-// GREATER THAN OPERATORS
-// ========================================
+// greater than operations ==============================================
 
 func TestOpGt(t *testing.T) {
 	tests := []struct {
@@ -250,28 +200,28 @@ func TestOpGt(t *testing.T) {
 		a, b     any
 		expected bool
 	}{
-		// Basic comparisons
+		// basic comparisons
 		{"greater than", 5, 3, true},
 		{"less than", 3, 5, false},
 		{"equal", 5, 5, false},
 
-		// Negative numbers
+		// negative numbers
 		{"negative greater than negative", -3, -5, true},
 		{"negative less than negative", -5, -3, false},
 		{"positive greater than negative", 3, -5, true},
 		{"negative less than positive", -5, 3, false},
 
-		// Zero comparisons
+		// zero comparisons
 		{"positive greater than zero", 5, 0, true},
 		{"zero not greater than zero", 0, 0, false},
 		{"negative less than zero", -5, 0, false},
 
-		// Float comparisons
+		// float comparisons
 		{"float greater than", 3.7, 2.5, true},
 		{"float less than", 2.5, 3.7, false},
 		{"float equal", 3.14, 3.14, false},
 
-		// Large numbers
+		// large numbers
 		{"large numbers", 1000000, 999999, true},
 	}
 
@@ -300,27 +250,27 @@ func TestOpGe(t *testing.T) {
 		a, b     any
 		expected bool
 	}{
-		// Basic comparisons
+		// basic comparisons
 		{"greater than", 5, 3, true},
 		{"less than", 3, 5, false},
 		{"equal", 5, 5, true},
 
-		// Negative numbers
+		// negative numbers
 		{"negative greater than negative", -3, -5, true},
 		{"negative equal", -5, -5, true},
 		{"negative less than negative", -5, -3, false},
 
-		// Zero comparisons
+		// zero comparisons
 		{"zero equals zero", 0, 0, true},
 		{"positive greater than zero", 5, 0, true},
 		{"zero not greater than positive", 0, 5, false},
 
-		// Float comparisons
+		// float comparisons
 		{"float greater than", 3.7, 2.5, true},
 		{"float equal", 3.14, 3.14, true},
 		{"float less than", 2.5, 3.7, false},
 
-		// Boundary cases
+		// boundary cases
 		{"max int", 2147483647, 2147483646, true},
 	}
 
@@ -343,9 +293,7 @@ func TestOpGe(t *testing.T) {
 	}
 }
 
-// ========================================
-// INTEGRATION TESTS
-// ========================================
+// comparison integration tests ======================================
 
 func TestComparisonWithBooleanLogic(t *testing.T) {
 	// Test: 5 3 gt 2 1 gt and  →  (5>3) AND (2>1) → true AND true → true
@@ -353,13 +301,13 @@ func TestComparisonWithBooleanLogic(t *testing.T) {
 
 	testInterpreter.opStack.Push(5)
 	testInterpreter.opStack.Push(3)
-	_ = opGt(testInterpreter)
+	opGt(testInterpreter)
 
 	testInterpreter.opStack.Push(2)
 	testInterpreter.opStack.Push(1)
-	_ = opGt(testInterpreter)
+	opGt(testInterpreter)
 
-	_ = opAnd(testInterpreter)
+	opAnd(testInterpreter)
 
 	result, _ := testInterpreter.opStack.Pop()
 	if result != true {
@@ -373,10 +321,10 @@ func TestComparisonWithArithmetic(t *testing.T) {
 
 	testInterpreter.opStack.Push(3)
 	testInterpreter.opStack.Push(4)
-	_ = opAdd(testInterpreter)
+	opAdd(testInterpreter)
 
 	testInterpreter.opStack.Push(10)
-	_ = opLt(testInterpreter)
+	opLt(testInterpreter)
 
 	result, _ := testInterpreter.opStack.Pop()
 	if result != true {
@@ -386,27 +334,26 @@ func TestComparisonWithArithmetic(t *testing.T) {
 
 func TestComparisonSymmetry(t *testing.T) {
 	// Test: a < b is equivalent to b > a
-	interp1 := CreateInterpreter()
-	interp1.opStack.Push(3)
-	interp1.opStack.Push(5)
-	_ = opLt(interp1)
-	result1, _ := interp1.opStack.Pop()
+	testInterpreter1 := CreateInterpreter()
+	testInterpreter1.opStack.Push(3)
+	testInterpreter1.opStack.Push(5)
+	_ = opLt(testInterpreter1)
+	result1, _ := testInterpreter1.opStack.Pop()
 
-	interp2 := CreateInterpreter()
-	interp2.opStack.Push(5)
-	interp2.opStack.Push(3)
-	_ = opGt(interp2)
-	result2, _ := interp2.opStack.Pop()
+	testInterpreter2 := CreateInterpreter()
+	testInterpreter2.opStack.Push(5)
+	testInterpreter2.opStack.Push(3)
+	_ = opGt(testInterpreter2)
+	result2, _ := testInterpreter2.opStack.Pop()
 
 	if result1 != result2 {
 		t.Errorf("symmetry broken: 3<5=%v but 5>3=%v", result1, result2)
 	}
 }
 
-// ========================================
-// ERROR HANDLING TESTS
-// ========================================
+// comparison error handling ==================================
 
+// type mismatch testing
 func TestComparisonTypeErrors(t *testing.T) {
 	tests := []struct {
 		name string
