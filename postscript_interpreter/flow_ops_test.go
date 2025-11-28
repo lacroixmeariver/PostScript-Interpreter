@@ -8,8 +8,8 @@ import (
  -----------------------------------------------------------------------------
 	Note: Parts of these tests were drafted with the use of Generative AI.
 	All test content and logic has been reviewed and verified manually.
- ----------------------------------------------------------------------------- 
-*/ 
+ -----------------------------------------------------------------------------
+*/
 
 func TestOpIf(t *testing.T) {
 	// testing if block
@@ -27,7 +27,7 @@ func TestOpIf(t *testing.T) {
 		{Type: TOKEN_OPERATOR, Value: "if"},
 	}
 	i.Execute(tokens)
-	checkStackTop(t, i, 3.0)
+	compareStackTop(t, i, 3.0)
 }
 
 func TestOpIfElse(t *testing.T) {
@@ -53,7 +53,7 @@ func TestOpIfElse(t *testing.T) {
 		{Type: TOKEN_OPERATOR, Value: "ifelse"},
 	}
 	i.Execute(tokens)
-	checkStackTop(t, i, -1.0)
+	compareStackTop(t, i, -1.0)
 }
 
 func TestOpFor(t *testing.T) {
@@ -72,7 +72,7 @@ func TestOpFor(t *testing.T) {
 		{Type: TOKEN_OPERATOR, Value: "for"},
 	}
 	i.Execute(tokens)
-	checkStackTop(t, i, 3)
+	compareStackTop(t, i, 3)
 }
 
 func TestOpRepeat(t *testing.T) {
@@ -95,7 +95,7 @@ func TestOpRepeat(t *testing.T) {
 		{Type: TOKEN_OPERATOR, Value: "repeat"},
 	}
 	i.Execute(tokens)
-	checkStackTop(t, i, 2)
+	compareStackTop(t, i, 2)
 }
 
 func TestOpQuit(t *testing.T) {
@@ -113,6 +113,6 @@ func TestOpQuit(t *testing.T) {
 		t.Fatal("quit flag expected to be true")
 	}
 
-	checkStackCount(t, i, 1)
-	checkStackTop(t, i, 1)
+	compareStackCount(t, i, 1)
+	compareStackTop(t, i, 1)
 }

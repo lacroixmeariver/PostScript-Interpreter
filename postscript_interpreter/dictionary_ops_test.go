@@ -8,8 +8,8 @@ import (
  -----------------------------------------------------------------------------
 	Note: Parts of these tests were drafted with the use of Generative AI.
 	All test content and logic has been reviewed and verified manually.
- ----------------------------------------------------------------------------- 
-*/ 
+ -----------------------------------------------------------------------------
+*/
 
 func TestOpDict(t *testing.T) {
 	// testing the creation of a dictionary with cap of 10
@@ -43,7 +43,7 @@ func TestOpDict(t *testing.T) {
 		t.Error("Expected items map to be initialized, got nil")
 	}
 
-	// making sure the dictionary at this stage is empty 
+	// making sure the dictionary at this stage is empty
 	if len(dict.items) != 0 {
 		t.Errorf("Expected empty dictionary, got %d items", len(dict.items))
 	}
@@ -51,7 +51,7 @@ func TestOpDict(t *testing.T) {
 
 func TestOpBegin(t *testing.T) {
 	// testing the addition of new dict to dict stack
-	// expected value: dictionary with cap 10 on the dict stack 
+	// expected value: dictionary with cap 10 on the dict stack
 	tokens := []Token{
 		{Type: TOKEN_INT, Value: 10},
 		{Type: TOKEN_OPERATOR, Value: "dict"},
@@ -61,7 +61,7 @@ func TestOpBegin(t *testing.T) {
 	testInterpreter := CreateInterpreter()
 
 	// initial dict stack just has one dictionary (the global one)
-	initialDictStackSize := len(testInterpreter.dictStack) 
+	initialDictStackSize := len(testInterpreter.dictStack)
 
 	err := testInterpreter.Execute(tokens)
 	if err != nil {
@@ -69,7 +69,7 @@ func TestOpBegin(t *testing.T) {
 	}
 
 	// executing tokens should add one to stack
-	if len(testInterpreter.dictStack) != initialDictStackSize + 1 { 
+	if len(testInterpreter.dictStack) != initialDictStackSize+1 {
 		t.Errorf("Expected dict stack size %d, got %d", initialDictStackSize+1, len(testInterpreter.dictStack))
 	}
 
@@ -80,7 +80,7 @@ func TestOpBegin(t *testing.T) {
 }
 
 func TestOpEnd(t *testing.T) {
-	// testing the definition of the end of a dictionary on dict stack 
+	// testing the definition of the end of a dictionary on dict stack
 	// dict stack should be +1 then back to initial size
 	tokens := []Token{
 		{Type: TOKEN_INT, Value: 10},
@@ -92,7 +92,7 @@ func TestOpEnd(t *testing.T) {
 	testInterpreter := CreateInterpreter()
 	initialDictStackSize := len(testInterpreter.dictStack) // stack: [global]
 
-	err := testInterpreter.Execute(tokens) // stack: [newDict, global] >> [global] 
+	err := testInterpreter.Execute(tokens) // stack: [newDict, global] >> [global]
 	if err != nil {
 		t.Fatalf("Execute failed: %v", err)
 	}
@@ -108,9 +108,9 @@ func TestOpDef(t *testing.T) {
 	// expected value: x should be defined in the dictionary as 5
 	// note: converting to PSName in test cases bypassing tokenizer
 	tokens := []Token{
-		{Type: TOKEN_NAME, Value: PSName("x")},       // pushing /x as a name
-		{Type: TOKEN_INT, Value: 5},          // pushing 5
-		{Type: TOKEN_OPERATOR, Value: "def"}, // def operator setting x = 5
+		{Type: TOKEN_NAME, Value: PSName("x")}, // pushing /x as a name
+		{Type: TOKEN_INT, Value: 5},            // pushing 5
+		{Type: TOKEN_OPERATOR, Value: "def"},   // def operator setting x = 5
 	}
 
 	testInterpreter := executeTest(t, tokens)
@@ -155,5 +155,5 @@ func TestOpLength(t *testing.T) {
 	}
 
 	testInterpreter := executeTest(t, tokens)
-	checkStackTop(t, testInterpreter, 2) 
+	compareStackTop(t, testInterpreter, 2)
 }

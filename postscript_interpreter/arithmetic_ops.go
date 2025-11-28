@@ -16,12 +16,12 @@ func opAdd(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	yToNum, err := ToNumber(y)
+	yToNum, err := convertToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -41,12 +41,12 @@ func opSub(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	yToNum, err := ToNumber(y)
+	yToNum, err := convertToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -66,12 +66,12 @@ func opMul(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	yToNum, err := ToNumber(y)
+	yToNum, err := convertToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -91,12 +91,12 @@ func opDiv(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	yToNum, err := ToNumber(y)
+	yToNum, err := convertToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -123,12 +123,12 @@ func opIntdiv(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	yToNum, err := ToNumber(y)
+	yToNum, err := convertToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -152,12 +152,12 @@ func opMod(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
 
-	yToNum, err := ToNumber(y)
+	yToNum, err := convertToNumber(y)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -181,7 +181,7 @@ func opSqrt(i *Interpreter) error {
 	}
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -199,7 +199,7 @@ func opAbs(i *Interpreter) error {
 	}
 
 	val, _ := i.opStack.Pop()
-	num, err := ToNumber(val)
+	num, err := convertToNumber(val)
 	if err != nil {
 		return err
 	}
@@ -220,7 +220,7 @@ func opNeg(i *Interpreter) error {
 	}
 
 	val, _ := i.opStack.Pop()
-	num, err := ToNumber(val)
+	num, err := convertToNumber(val)
 	if err != nil {
 		return err
 	}
@@ -239,7 +239,7 @@ func opCeil(i *Interpreter) error {
 
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -258,7 +258,7 @@ func opFloor(i *Interpreter) error {
 
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}
@@ -277,7 +277,7 @@ func opRound(i *Interpreter) error {
 
 	x, _ := i.opStack.Pop()
 
-	xToNum, err := ToNumber(x)
+	xToNum, err := convertToNumber(x)
 	if err != nil {
 		return fmt.Errorf("operand error")
 	}

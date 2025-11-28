@@ -16,8 +16,8 @@ func opEq(i *Interpreter) error {
 	x, _ := i.opStack.Pop()
 	y, _ := i.opStack.Pop()
 
-	numX, errX := ToNumber(x)
-	numY, errY := ToNumber(y)
+	numX, errX := convertToNumber(x)
+	numY, errY := convertToNumber(y)
 
 	if errX == nil && errY == nil {
 		result := numX == numY
@@ -48,8 +48,8 @@ func opNe(i *Interpreter) error {
 	x, _ := i.opStack.Pop()
 	y, _ := i.opStack.Pop()
 
-	numX, errX := ToNumber(x)
-	numY, errY := ToNumber(y)
+	numX, errX := convertToNumber(x)
+	numY, errY := convertToNumber(y)
 
 	if errX == nil && errY == nil {
 		result := numX != numY
@@ -70,7 +70,6 @@ func opNe(i *Interpreter) error {
 	// accounting for type mismatch
 	return fmt.Errorf("type mismatch, please ensure both elements are the same type")
 
-
 }
 
 // opGe pushes true if one item is greater than or equal to the other
@@ -83,8 +82,8 @@ func opGe(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, errX := ToNumber(x)
-	numY, errY := ToNumber(y)
+	numX, errX := convertToNumber(x)
+	numY, errY := convertToNumber(y)
 
 	if errX == nil && errY == nil {
 		result := numX >= numY
@@ -116,8 +115,8 @@ func opGt(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, errX := ToNumber(x)
-	numY, errY := ToNumber(y)
+	numX, errX := convertToNumber(x)
+	numY, errY := convertToNumber(y)
 
 	if errX == nil && errY == nil {
 		result := numX > numY
@@ -149,8 +148,8 @@ func opLe(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, errX := ToNumber(x)
-	numY, errY := ToNumber(y)
+	numX, errX := convertToNumber(x)
+	numY, errY := convertToNumber(y)
 
 	if errX == nil && errY == nil {
 		result := numX <= numY
@@ -182,8 +181,8 @@ func opLt(i *Interpreter) error {
 	y, _ := i.opStack.Pop()
 	x, _ := i.opStack.Pop()
 
-	numX, errX := ToNumber(x)
-	numY, errY := ToNumber(y)
+	numX, errX := convertToNumber(x)
+	numY, errY := convertToNumber(y)
 
 	if errX == nil && errY == nil {
 		result := numX < numY
