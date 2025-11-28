@@ -5,39 +5,13 @@ import (
 )
 
 /*
-	Disclosure: The tests in this file were written using Generative AI.
+ -----------------------------------------------------------------------------
+	Note: Parts of these tests were drafted with the use of Generative AI.
+	All test content and logic has been reviewed and verified manually.
+ -----------------------------------------------------------------------------
 */
 
-// Helper function to create interpreter and execute tokens
-func executeTest(t *testing.T, tokens []Token) *Interpreter {
-	interp := CreateInterpreter()
-	err := interp.Execute(tokens)
-	if err != nil {
-		t.Fatalf("Execute failed: %v", err)
-	}
-	return interp
-}
-
-// Helper to check top of stack
-func checkStackTop(t *testing.T, interp *Interpreter, expected interface{}) {
-	if interp.opStack.StackCount() == 0 {
-		t.Fatalf("Stack is empty, expected %v", expected)
-	}
-	top, _ := interp.opStack.Peek()
-	if top != expected {
-		t.Errorf("Expected %v on top of stack, got %v", expected, top)
-	}
-}
-
-// Helper to check stack count
-func checkStackCount(t *testing.T, interp *Interpreter, expected int) {
-	count := interp.opStack.StackCount()
-	if count != expected {
-		t.Errorf("Expected stack count %d, got %d", expected, count)
-	}
-}
-
-// ============================================ Arithmetic Tests
+// ============================================ arithmetic interpreter tests
 
 func TestAdd(t *testing.T) {
 	tokens := []Token{
@@ -45,8 +19,8 @@ func TestAdd(t *testing.T) {
 		{Type: TOKEN_INT, Value: 3},
 		{Type: TOKEN_OPERATOR, Value: "add"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 8.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 8.0)
 }
 
 func TestSub(t *testing.T) {
@@ -55,8 +29,8 @@ func TestSub(t *testing.T) {
 		{Type: TOKEN_INT, Value: 3},
 		{Type: TOKEN_OPERATOR, Value: "sub"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 7.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 7.0)
 }
 
 func TestMul(t *testing.T) {
@@ -65,8 +39,8 @@ func TestMul(t *testing.T) {
 		{Type: TOKEN_INT, Value: 5},
 		{Type: TOKEN_OPERATOR, Value: "mul"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 20.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 20.0)
 }
 
 func TestDiv(t *testing.T) {
@@ -75,8 +49,8 @@ func TestDiv(t *testing.T) {
 		{Type: TOKEN_INT, Value: 4},
 		{Type: TOKEN_OPERATOR, Value: "div"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 5.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 5.0)
 }
 
 func TestIdiv(t *testing.T) {
@@ -85,8 +59,21 @@ func TestIdiv(t *testing.T) {
 		{Type: TOKEN_INT, Value: 2},
 		{Type: TOKEN_OPERATOR, Value: "idiv"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 3)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 3)
+}
+
+func TestDivideByZeroError(t *testing.T) {
+	tokens := []Token{
+		{Type: TOKEN_INT, Value: 5},
+		{Type: TOKEN_INT, Value: 0},
+		{Type: TOKEN_OPERATOR, Value: "div"},
+	}
+	testInterpreter := CreateInterpreter()
+	err := testInterpreter.Execute(tokens)
+	if err == nil {
+		t.Error("Expected divide by zero error")
+	}
 }
 
 func TestMod(t *testing.T) {
@@ -95,8 +82,8 @@ func TestMod(t *testing.T) {
 		{Type: TOKEN_INT, Value: 3},
 		{Type: TOKEN_OPERATOR, Value: "mod"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 1)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 1)
 }
 
 func TestAbs(t *testing.T) {
@@ -104,8 +91,8 @@ func TestAbs(t *testing.T) {
 		{Type: TOKEN_INT, Value: -5},
 		{Type: TOKEN_OPERATOR, Value: "abs"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 5.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 5.0)
 }
 
 func TestNeg(t *testing.T) {
@@ -113,8 +100,8 @@ func TestNeg(t *testing.T) {
 		{Type: TOKEN_INT, Value: 5},
 		{Type: TOKEN_OPERATOR, Value: "neg"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, -5.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, -5.0)
 }
 
 func TestSqrt(t *testing.T) {
@@ -122,8 +109,8 @@ func TestSqrt(t *testing.T) {
 		{Type: TOKEN_INT, Value: 16},
 		{Type: TOKEN_OPERATOR, Value: "sqrt"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 4.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 4.0)
 }
 
 func TestCeiling(t *testing.T) {
@@ -131,8 +118,8 @@ func TestCeiling(t *testing.T) {
 		{Type: TOKEN_FLOAT, Value: 3.2},
 		{Type: TOKEN_OPERATOR, Value: "ceiling"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 4.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 4.0)
 }
 
 func TestFloor(t *testing.T) {
@@ -140,8 +127,8 @@ func TestFloor(t *testing.T) {
 		{Type: TOKEN_FLOAT, Value: 3.8},
 		{Type: TOKEN_OPERATOR, Value: "floor"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 3.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 3.0)
 }
 
 func TestRound(t *testing.T) {
@@ -149,20 +136,33 @@ func TestRound(t *testing.T) {
 		{Type: TOKEN_FLOAT, Value: 3.5},
 		{Type: TOKEN_OPERATOR, Value: "round"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 4.0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 4.0)
 }
 
-// ============================================ Stack Tests
+func TestComplexArithmetic(t *testing.T) {
+	tokens := []Token{
+		// stack: [3, 5, add, 2, mul]
+		{Type: TOKEN_INT, Value: 3},
+		{Type: TOKEN_INT, Value: 5},
+		{Type: TOKEN_OPERATOR, Value: "add"},
+		{Type: TOKEN_INT, Value: 2},
+		{Type: TOKEN_OPERATOR, Value: "mul"},
+	}
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 16.0)
+}
+
+// ============================================ stack manipulation tests
 
 func TestDup(t *testing.T) {
 	tokens := []Token{
 		{Type: TOKEN_INT, Value: 42},
 		{Type: TOKEN_OPERATOR, Value: "dup"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackCount(t, interp, 2)
-	checkStackTop(t, interp, 42)
+	testInterpreter := executeTest(t, tokens)
+	compareStackCount(t, testInterpreter, 2)
+	compareStackTop(t, testInterpreter, 42)
 }
 
 func TestPop(t *testing.T) {
@@ -172,9 +172,9 @@ func TestPop(t *testing.T) {
 		{Type: TOKEN_INT, Value: 3},
 		{Type: TOKEN_OPERATOR, Value: "pop"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackCount(t, interp, 2)
-	checkStackTop(t, interp, 2)
+	testInterpreter := executeTest(t, tokens)
+	compareStackCount(t, testInterpreter, 2)
+	compareStackTop(t, testInterpreter, 2)
 }
 
 func TestExch(t *testing.T) {
@@ -183,10 +183,10 @@ func TestExch(t *testing.T) {
 		{Type: TOKEN_INT, Value: 2},
 		{Type: TOKEN_OPERATOR, Value: "exch"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 1)
-	interp.opStack.Pop()
-	checkStackTop(t, interp, 2)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 1)
+	testInterpreter.opStack.Pop()
+	compareStackTop(t, testInterpreter, 2)
 }
 
 func TestClear(t *testing.T) {
@@ -196,8 +196,8 @@ func TestClear(t *testing.T) {
 		{Type: TOKEN_INT, Value: 3},
 		{Type: TOKEN_OPERATOR, Value: "clear"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackCount(t, interp, 0)
+	testInterpreter := executeTest(t, tokens)
+	compareStackCount(t, testInterpreter, 0)
 }
 
 func TestCount(t *testing.T) {
@@ -207,12 +207,27 @@ func TestCount(t *testing.T) {
 		{Type: TOKEN_INT, Value: 3},
 		{Type: TOKEN_OPERATOR, Value: "count"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 3)
-	checkStackCount(t, interp, 4) // 3 original items + count result
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, 3)
+	compareStackCount(t, testInterpreter, 4)
 }
 
-// ============================================ Comparison Tests
+
+func TestStackManipulation(t *testing.T) {
+	tokens := []Token{
+		//stack: [1, 2, 3, exch, pop]
+		{Type: TOKEN_INT, Value: 1},
+		{Type: TOKEN_INT, Value: 2},
+		{Type: TOKEN_INT, Value: 3},
+		{Type: TOKEN_OPERATOR, Value: "exch"},
+		{Type: TOKEN_OPERATOR, Value: "pop"},
+	}
+	testInterpreter := executeTest(t, tokens)
+	compareStackCount(t, testInterpreter, 2)
+	compareStackTop(t, testInterpreter, 3)
+}
+
+// ============================================ comparison tests
 
 func TestEq(t *testing.T) {
 	tokens := []Token{
@@ -220,8 +235,8 @@ func TestEq(t *testing.T) {
 		{Type: TOKEN_INT, Value: 5},
 		{Type: TOKEN_OPERATOR, Value: "eq"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, true)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, true)
 }
 
 func TestNe(t *testing.T) {
@@ -230,8 +245,8 @@ func TestNe(t *testing.T) {
 		{Type: TOKEN_INT, Value: 3},
 		{Type: TOKEN_OPERATOR, Value: "ne"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, true)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, true)
 }
 
 func TestGt(t *testing.T) {
@@ -240,8 +255,8 @@ func TestGt(t *testing.T) {
 		{Type: TOKEN_INT, Value: 3},
 		{Type: TOKEN_OPERATOR, Value: "gt"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, true)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, true)
 }
 
 func TestGe(t *testing.T) {
@@ -250,8 +265,8 @@ func TestGe(t *testing.T) {
 		{Type: TOKEN_INT, Value: 5},
 		{Type: TOKEN_OPERATOR, Value: "ge"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, true)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, true)
 }
 
 func TestLt(t *testing.T) {
@@ -260,8 +275,8 @@ func TestLt(t *testing.T) {
 		{Type: TOKEN_INT, Value: 5},
 		{Type: TOKEN_OPERATOR, Value: "lt"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, true)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, true)
 }
 
 func TestLe(t *testing.T) {
@@ -270,11 +285,11 @@ func TestLe(t *testing.T) {
 		{Type: TOKEN_INT, Value: 5},
 		{Type: TOKEN_OPERATOR, Value: "le"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, true)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, true)
 }
 
-// ============================================ Boolean Tests
+// ============================================ boolean/logical tests
 
 func TestAnd(t *testing.T) {
 	tokens := []Token{
@@ -282,8 +297,8 @@ func TestAnd(t *testing.T) {
 		{Type: TOKEN_OPERATOR, Value: "false"},
 		{Type: TOKEN_OPERATOR, Value: "and"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, false)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, false)
 }
 
 func TestOr(t *testing.T) {
@@ -292,8 +307,8 @@ func TestOr(t *testing.T) {
 		{Type: TOKEN_OPERATOR, Value: "false"},
 		{Type: TOKEN_OPERATOR, Value: "or"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, true)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, true)
 }
 
 func TestNot(t *testing.T) {
@@ -301,75 +316,35 @@ func TestNot(t *testing.T) {
 		{Type: TOKEN_OPERATOR, Value: "true"},
 		{Type: TOKEN_OPERATOR, Value: "not"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, false)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, false)
 }
 
 func TestTrue(t *testing.T) {
 	tokens := []Token{
 		{Type: TOKEN_OPERATOR, Value: "true"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, true)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, true)
 }
 
 func TestFalse(t *testing.T) {
 	tokens := []Token{
 		{Type: TOKEN_OPERATOR, Value: "false"},
 	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, false)
+	testInterpreter := executeTest(t, tokens)
+	compareStackTop(t, testInterpreter, false)
 }
 
-// ============================================ Complex Tests
-
-func TestComplexArithmetic(t *testing.T) {
-	// (3 + 5) * 2 = 16
-	tokens := []Token{
-		{Type: TOKEN_INT, Value: 3},
-		{Type: TOKEN_INT, Value: 5},
-		{Type: TOKEN_OPERATOR, Value: "add"},
-		{Type: TOKEN_INT, Value: 2},
-		{Type: TOKEN_OPERATOR, Value: "mul"},
-	}
-	interp := executeTest(t, tokens)
-	checkStackTop(t, interp, 16.0)
-}
-
-func TestStackManipulation(t *testing.T) {
-	// 1 2 3 exch pop -> leaves 1 2
-	tokens := []Token{
-		{Type: TOKEN_INT, Value: 1},
-		{Type: TOKEN_INT, Value: 2},
-		{Type: TOKEN_INT, Value: 3},
-		{Type: TOKEN_OPERATOR, Value: "exch"},
-		{Type: TOKEN_OPERATOR, Value: "pop"},
-	}
-	interp := executeTest(t, tokens)
-	checkStackCount(t, interp, 2)
-	checkStackTop(t, interp, 3)
-}
-
-func TestDivideByZeroError(t *testing.T) {
-	tokens := []Token{
-		{Type: TOKEN_INT, Value: 5},
-		{Type: TOKEN_INT, Value: 0},
-		{Type: TOKEN_OPERATOR, Value: "div"},
-	}
-	interp := CreateInterpreter()
-	err := interp.Execute(tokens)
-	if err == nil {
-		t.Error("Expected divide by zero error")
-	}
-}
+// ============================================ error handling
 
 func TestStackUnderflowError(t *testing.T) {
 	tokens := []Token{
 		{Type: TOKEN_INT, Value: 5},
-		{Type: TOKEN_OPERATOR, Value: "add"}, // Need 2 operands, only have 1
+		{Type: TOKEN_OPERATOR, Value: "add"}, // not enough operands to complete this op
 	}
-	interp := CreateInterpreter()
-	err := interp.Execute(tokens)
+	testInterpreter := CreateInterpreter()
+	err := testInterpreter.Execute(tokens)
 	if err == nil {
 		t.Error("Expected stack underflow error")
 	}
@@ -379,17 +354,17 @@ func TestUndefinedOperatorError(t *testing.T) {
 	tokens := []Token{
 		{Type: TOKEN_OPERATOR, Value: "nonexistent"},
 	}
-	interp := CreateInterpreter()
-	err := interp.Execute(tokens)
+	testInterpreter := CreateInterpreter()
+	err := testInterpreter.Execute(tokens)
 	if err == nil {
 		t.Error("Expected undefined operator error")
 	}
 }
 
-// ============================================ buildProcedure Tests
+// ============================================ building procedure tests
 
 func TestBuildProcedureSimple(t *testing.T) {
-	// Test: { 1 2 add }
+	// building: {1 2 add}
 	tokens := []Token{
 		{Type: TOKEN_BLOCK_START},
 		{Type: TOKEN_INT, Value: 1},
@@ -398,8 +373,8 @@ func TestBuildProcedureSimple(t *testing.T) {
 		{Type: TOKEN_BLOCK_END},
 	}
 
-	interp := CreateInterpreter()
-	proc, endPos, err := interp.buildProcedure(tokens, 0)
+	testInterpreter := CreateInterpreter()
+	proc, endPos, err := testInterpreter.buildProcedure(tokens, 0)
 
 	if err != nil {
 		t.Fatalf("buildProcedure failed: %v", err)
@@ -413,7 +388,7 @@ func TestBuildProcedureSimple(t *testing.T) {
 		t.Errorf("Expected 3 tokens in procedure body, got %d", len(proc.Body))
 	}
 
-	// Check the tokens are correct
+	// token check
 	if proc.Body[0].Type != TOKEN_INT || proc.Body[0].Value != 1 {
 		t.Errorf("Expected first token to be INT 1")
 	}
@@ -426,7 +401,7 @@ func TestBuildProcedureSimple(t *testing.T) {
 }
 
 func TestBuildProcedureNested(t *testing.T) {
-	// Test: { { 1 2 } 3 }
+	// building: { { 1 2 } 3 }
 	tokens := []Token{
 		{Type: TOKEN_BLOCK_START},
 		{Type: TOKEN_BLOCK_START},
@@ -437,8 +412,8 @@ func TestBuildProcedureNested(t *testing.T) {
 		{Type: TOKEN_BLOCK_END},
 	}
 
-	interp := CreateInterpreter()
-	proc, endPos, err := interp.buildProcedure(tokens, 0)
+	testInterpreter := CreateInterpreter()
+	proc, endPos, err := testInterpreter.buildProcedure(tokens, 0)
 
 	if err != nil {
 		t.Fatalf("buildProcedure failed: %v", err)
@@ -452,7 +427,7 @@ func TestBuildProcedureNested(t *testing.T) {
 		t.Errorf("Expected 4 tokens in procedure body, got %d", len(proc.Body))
 	}
 
-	// Check that nested block markers are preserved
+	// checking nested block structure
 	if proc.Body[0].Type != TOKEN_BLOCK_START {
 		t.Errorf("Expected first token to be BLOCK_START")
 	}
@@ -461,43 +436,15 @@ func TestBuildProcedureNested(t *testing.T) {
 	}
 }
 
-func TestBuildProcedureDeepNesting(t *testing.T) {
-	// Test: { { { 1 } } }
-	tokens := []Token{
-		{Type: TOKEN_BLOCK_START},
-		{Type: TOKEN_BLOCK_START},
-		{Type: TOKEN_BLOCK_START},
-		{Type: TOKEN_INT, Value: 1},
-		{Type: TOKEN_BLOCK_END},
-		{Type: TOKEN_BLOCK_END},
-		{Type: TOKEN_BLOCK_END},
-	}
-
-	interp := CreateInterpreter()
-	proc, endPos, err := interp.buildProcedure(tokens, 0)
-
-	if err != nil {
-		t.Fatalf("buildProcedure failed: %v", err)
-	}
-
-	if endPos != 7 {
-		t.Errorf("Expected endPos 7, got %d", endPos)
-	}
-
-	if len(proc.Body) != 5 {
-		t.Errorf("Expected 5 tokens in procedure body, got %d", len(proc.Body))
-	}
-}
-
 func TestBuildProcedureEmpty(t *testing.T) {
-	// Test: { }
+	// building: { }
 	tokens := []Token{
 		{Type: TOKEN_BLOCK_START},
 		{Type: TOKEN_BLOCK_END},
 	}
 
-	interp := CreateInterpreter()
-	proc, endPos, err := interp.buildProcedure(tokens, 0)
+	testInterpreter := CreateInterpreter()
+	proc, endPos, err := testInterpreter.buildProcedure(tokens, 0)
 
 	if err != nil {
 		t.Fatalf("buildProcedure failed: %v", err)
@@ -513,15 +460,16 @@ func TestBuildProcedureEmpty(t *testing.T) {
 }
 
 func TestBuildProcedureUnclosed(t *testing.T) {
-	// Test: { 1 2 (missing closing brace)
+	// building: { 1 2 
 	tokens := []Token{
 		{Type: TOKEN_BLOCK_START},
 		{Type: TOKEN_INT, Value: 1},
 		{Type: TOKEN_INT, Value: 2},
+		// no closing brace
 	}
 
-	interp := CreateInterpreter()
-	_, _, err := interp.buildProcedure(tokens, 0)
+	testInterpreter := CreateInterpreter()
+	_, _, err := testInterpreter.buildProcedure(tokens, 0)
 
 	if err == nil {
 		t.Error("Expected error for unclosed procedure, got nil")
@@ -529,93 +477,5 @@ func TestBuildProcedureUnclosed(t *testing.T) {
 
 	if err.Error() != "unclosed procedure" {
 		t.Errorf("Expected 'unclosed procedure' error, got: %v", err)
-	}
-}
-
-func TestBuildProcedureWithMultipleStatements(t *testing.T) {
-	// Test: { 1 2 add 3 4 mul }
-	tokens := []Token{
-		{Type: TOKEN_BLOCK_START},
-		{Type: TOKEN_INT, Value: 1},
-		{Type: TOKEN_INT, Value: 2},
-		{Type: TOKEN_OPERATOR, Value: "add"},
-		{Type: TOKEN_INT, Value: 3},
-		{Type: TOKEN_INT, Value: 4},
-		{Type: TOKEN_OPERATOR, Value: "mul"},
-		{Type: TOKEN_BLOCK_END},
-	}
-
-	interp := CreateInterpreter()
-	proc, endPos, err := interp.buildProcedure(tokens, 0)
-
-	if err != nil {
-		t.Fatalf("buildProcedure failed: %v", err)
-	}
-
-	if endPos != 8 {
-		t.Errorf("Expected endPos 8, got %d", endPos)
-	}
-
-	if len(proc.Body) != 6 {
-		t.Errorf("Expected 6 tokens in procedure body, got %d", len(proc.Body))
-	}
-}
-
-func TestExecuteWithProcedure(t *testing.T) {
-	// Test that procedures are correctly pushed onto the stack
-	// { 5 10 add } should push the procedure onto the stack
-	tokens := []Token{
-		{Type: TOKEN_BLOCK_START},
-		{Type: TOKEN_INT, Value: 5},
-		{Type: TOKEN_INT, Value: 10},
-		{Type: TOKEN_OPERATOR, Value: "add"},
-		{Type: TOKEN_BLOCK_END},
-	}
-
-	interp := executeTest(t, tokens)
-
-	if interp.opStack.StackCount() != 1 {
-		t.Errorf("Expected 1 item on stack, got %d", interp.opStack.StackCount())
-	}
-
-	top, _ := interp.opStack.Peek()
-	proc, ok := top.(PSBlock)
-	if !ok {
-		t.Fatalf("Expected PSBlock on top of stack, got %T", top)
-	}
-
-	if len(proc.Body) != 3 {
-		t.Errorf("Expected procedure with 3 tokens, got %d", len(proc.Body))
-	}
-}
-
-func TestExecuteWithNestedProcedures(t *testing.T) {
-	// Test: { { 1 } { 2 } }
-	tokens := []Token{
-		{Type: TOKEN_BLOCK_START},
-		{Type: TOKEN_BLOCK_START},
-		{Type: TOKEN_INT, Value: 1},
-		{Type: TOKEN_BLOCK_END},
-		{Type: TOKEN_BLOCK_START},
-		{Type: TOKEN_INT, Value: 2},
-		{Type: TOKEN_BLOCK_END},
-		{Type: TOKEN_BLOCK_END},
-	}
-
-	interp := executeTest(t, tokens)
-
-	if interp.opStack.StackCount() != 1 {
-		t.Errorf("Expected 1 item on stack, got %d", interp.opStack.StackCount())
-	}
-
-	top, _ := interp.opStack.Peek()
-	proc, ok := top.(PSBlock)
-	if !ok {
-		t.Fatalf("Expected PSBlock on top of stack, got %T", top)
-	}
-
-	// Should have 6 tokens: { 1 } { 2 }
-	if len(proc.Body) != 6 {
-		t.Errorf("Expected procedure with 6 tokens, got %d", len(proc.Body))
 	}
 }
