@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// ================================ Boolean operators
+// ================================ boolean operations
 
 // opAnd performs logical AND
 func opAnd(i *Interpreter) error {

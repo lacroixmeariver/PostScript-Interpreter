@@ -5,17 +5,18 @@ import (
 )
 
 /*
-	Disclosure: The tests in this file were written using Generative AI.
-*/
+ -----------------------------------------------------------------------------
+	Note: Parts of these tests were drafted with the use of Generative AI.
+	All test content and logic has been reviewed and verified manually.
+ ----------------------------------------------------------------------------- 
+*/ 
 
-// ========================================
-// EQUALITY OPERATORS
-// ========================================
+// equality operations ========================================
 
 func TestOpEq(t *testing.T) {
 	tests := []struct {
 		name     string
-		a, b     interface{}
+		a, b     any
 		expected bool
 	}{
 		// Numbers
@@ -35,30 +36,30 @@ func TestOpEq(t *testing.T) {
 		{"empty strings", "", "", true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opEq(interp)
+			err := opEq(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("eq(%v, %v): expected %v, got %v", tt.a, tt.b, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("eq(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
 			}
 		})
 	}
 }
 
 func TestOpEqStackUnderflow(t *testing.T) {
-	interp := CreateInterpreter()
-	interp.opStack.Push(5)
+	testInterpreter := CreateInterpreter()
+	testInterpreter.opStack.Push(5)
 
-	err := opEq(interp)
+	err := opEq(testInterpreter)
 	if err == nil {
 		t.Error("expected stack underflow error")
 	}
@@ -67,7 +68,7 @@ func TestOpEqStackUnderflow(t *testing.T) {
 func TestOpNe(t *testing.T) {
 	tests := []struct {
 		name     string
-		a, b     interface{}
+		a, b     any
 		expected bool
 	}{
 		{"equal ints", 5, 5, false},
@@ -84,20 +85,20 @@ func TestOpNe(t *testing.T) {
 		{"unequal strings", "hello", "world", true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opNe(interp)
+			err := opNe(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("ne(%v, %v): expected %v, got %v", tt.a, tt.b, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("ne(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
 			}
 		})
 	}
@@ -110,7 +111,7 @@ func TestOpNe(t *testing.T) {
 func TestOpLt(t *testing.T) {
 	tests := []struct {
 		name     string
-		a, b     interface{}
+		a, b     any
 		expected bool
 	}{
 		// Basic comparisons
@@ -139,20 +140,20 @@ func TestOpLt(t *testing.T) {
 		{"float less than int", 2.5, 3, true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opLt(interp)
+			err := opLt(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("lt(%v, %v): expected %v, got %v", tt.a, tt.b, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("lt(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
 			}
 		})
 	}
@@ -170,20 +171,20 @@ func TestOpLtStrings(t *testing.T) {
 		{"case sensitive A before a", "Apple", "apple", true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opLt(interp)
+			err := opLt(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("lt(%v, %v): expected %v, got %v", tt.a, tt.b, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("lt(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
 			}
 		})
 	}
@@ -192,7 +193,7 @@ func TestOpLtStrings(t *testing.T) {
 func TestOpLe(t *testing.T) {
 	tests := []struct {
 		name     string
-		a, b     interface{}
+		a, b     any
 		expected bool
 	}{
 		// Basic comparisons
@@ -220,20 +221,20 @@ func TestOpLe(t *testing.T) {
 		{"very close floats less", 3.14158, 3.14159, true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opLe(interp)
+			err := opLe(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("le(%v, %v): expected %v, got %v", tt.a, tt.b, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("le(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
 			}
 		})
 	}
@@ -246,7 +247,7 @@ func TestOpLe(t *testing.T) {
 func TestOpGt(t *testing.T) {
 	tests := []struct {
 		name     string
-		a, b     interface{}
+		a, b     any
 		expected bool
 	}{
 		// Basic comparisons
@@ -274,20 +275,20 @@ func TestOpGt(t *testing.T) {
 		{"large numbers", 1000000, 999999, true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opGt(interp)
+			err := opGt(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("gt(%v, %v): expected %v, got %v", tt.a, tt.b, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("gt(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
 			}
 		})
 	}
@@ -296,7 +297,7 @@ func TestOpGt(t *testing.T) {
 func TestOpGe(t *testing.T) {
 	tests := []struct {
 		name     string
-		a, b     interface{}
+		a, b     any
 		expected bool
 	}{
 		// Basic comparisons
@@ -323,20 +324,20 @@ func TestOpGe(t *testing.T) {
 		{"max int", 2147483647, 2147483646, true},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(tt.a)
-			interp.opStack.Push(tt.b)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(test.a)
+			testInterpreter.opStack.Push(test.b)
 
-			err := opGe(interp)
+			err := opGe(testInterpreter)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
 
-			result, _ := interp.opStack.Pop()
-			if result != tt.expected {
-				t.Errorf("ge(%v, %v): expected %v, got %v", tt.a, tt.b, tt.expected, result)
+			result, _ := testInterpreter.opStack.Pop()
+			if result != test.expected {
+				t.Errorf("ge(%v, %v): expected %v, got %v", test.a, test.b, test.expected, result)
 			}
 		})
 	}
@@ -348,19 +349,19 @@ func TestOpGe(t *testing.T) {
 
 func TestComparisonWithBooleanLogic(t *testing.T) {
 	// Test: 5 3 gt 2 1 gt and  →  (5>3) AND (2>1) → true AND true → true
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	interp.opStack.Push(5)
-	interp.opStack.Push(3)
-	_ = opGt(interp)
+	testInterpreter.opStack.Push(5)
+	testInterpreter.opStack.Push(3)
+	_ = opGt(testInterpreter)
 
-	interp.opStack.Push(2)
-	interp.opStack.Push(1)
-	_ = opGt(interp)
+	testInterpreter.opStack.Push(2)
+	testInterpreter.opStack.Push(1)
+	_ = opGt(testInterpreter)
 
-	_ = opAnd(interp)
+	_ = opAnd(testInterpreter)
 
-	result, _ := interp.opStack.Pop()
+	result, _ := testInterpreter.opStack.Pop()
 	if result != true {
 		t.Errorf("expected true, got %v", result)
 	}
@@ -368,16 +369,16 @@ func TestComparisonWithBooleanLogic(t *testing.T) {
 
 func TestComparisonWithArithmetic(t *testing.T) {
 	// Test: 3 4 add 10 lt  →  7 < 10 → true
-	interp := CreateInterpreter()
+	testInterpreter := CreateInterpreter()
 
-	interp.opStack.Push(3)
-	interp.opStack.Push(4)
-	_ = opAdd(interp)
+	testInterpreter.opStack.Push(3)
+	testInterpreter.opStack.Push(4)
+	_ = opAdd(testInterpreter)
 
-	interp.opStack.Push(10)
-	_ = opLt(interp)
+	testInterpreter.opStack.Push(10)
+	_ = opLt(testInterpreter)
 
-	result, _ := interp.opStack.Pop()
+	result, _ := testInterpreter.opStack.Pop()
 	if result != true {
 		t.Errorf("expected true, got %v", result)
 	}
@@ -417,13 +418,13 @@ func TestComparisonTypeErrors(t *testing.T) {
 		{"ge type error", opGe},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			interp := CreateInterpreter()
-			interp.opStack.Push(5)
-			interp.opStack.Push("hello")
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			testInterpreter := CreateInterpreter()
+			testInterpreter.opStack.Push(5)
+			testInterpreter.opStack.Push("hello")
 
-			err := tt.op(interp)
+			err := test.op(testInterpreter)
 			if err == nil {
 				t.Log("Note: mixed type comparison allowed")
 			}
