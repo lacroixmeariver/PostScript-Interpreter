@@ -4,16 +4,19 @@ import (
 	"testing"
 )
 
-// stack tests
+// stack operations tests ========================================
+
 // initializing a stack
 func TestStackCreation(t *testing.T) {
 	testStack := CreateStack()
-	count := len(testStack.items)
-	if testStack == nil {
-		t.Fatal("Stack returned nil, not created")
+	if testStack != nil {
+		count := len(testStack.items)
+		if count != 0 {
+		t.Errorf("stack is not empty")
+		}
 	}
-	if count != 0 {
-		t.Errorf("Stack is not empty")
+	if testStack == nil {
+		t.Fatal("stack returned nil, not created")
 	}
 }
 
@@ -26,7 +29,7 @@ func TestStackPush(t *testing.T) {
 	}{
 		{"empty", []PSConstant{}, 0},
 		{"single item", []PSConstant{5}, 1},
-		{"three items", []PSConstant{"hi", "hello", "how you doin'"}, 3},
+		{"three items", []PSConstant{"hi", "hello", "howdy"}, 3},
 		{"different types", []PSConstant{99, "red balloons", '!'}, 3},
 		{"nil", []PSConstant{nil}, 1},
 	}
