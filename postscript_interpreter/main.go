@@ -88,8 +88,7 @@ func printWelcomeScreen() {
 	│   Washington State University - CptS 355 - Fall 2025        │
 	│   - Type 'quit' to exit                                     │
 	│   - To enable lexical scoping mode, run: 'go run . -lex'    │
-	│   For help type: 'help' or '?'                              │
-	│     + For command reference type 'commands'                 │
+	│   - For command reference type 'commands'                   │
 	│                                                             │
 	╰─────────────────────────────────────────────────────────────╯
 	`)
