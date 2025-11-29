@@ -27,7 +27,7 @@ and run using: `go run .` - for dynamic scoping (default setting) \
 `go run . -lex` for lexical scoping
 
 ## General REPL info
-The number displayed in REPL parenthesis: `PS (#)>` represents number of items in operand stack. \
+The number displayed in REPL parenthesis: `PS (#)>` represents number of items in operand stack \
 To **exit** the REPL, type `quit` \ 
 To access a reference of supported commands, type `commands`
 
@@ -49,6 +49,6 @@ to check test coverage: `go test -cover`
 | **I/O** | `print` `=` `==` |
 
 ## Project/Author Details
-**Author:** Ingrid Llorente
-**Course/Institution:** CptS 355 (Programming Language Design) - Washington State University
-**Date:** Fall semester, 2025
+**Author:** Ingrid Llorente \
+**Course/Institution:** CptS 355 (Programming Language Design) - Washington State University \
+**Date:** Fall semester, 2025 \
