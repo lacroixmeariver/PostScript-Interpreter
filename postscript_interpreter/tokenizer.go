@@ -142,7 +142,7 @@ func (t *Tokenizer) readName() Token {
 	t.pos++        // skip initial '/'
 	start := t.pos // start of character
 
-	for t.pos < len(t.input) && IsLetter(t.input[t.pos]) || IsDigit(t.input[t.pos]) {
+	for t.pos < len(t.input) && (IsLetter(t.input[t.pos]) || IsDigit(t.input[t.pos])) {
 		t.pos++
 	}
 	name := t.input[start:t.pos]
